@@ -18,7 +18,7 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 | Metadata Cleaner | Browser Fingerprint | V — AI Handler |
 |-----------------|---------------------|----------------|
-| ![Metadata](ScreenShots/metadata_analyzer.png) | ![Fingerprint](ScreenShots/fingerprint_analyzer.png) | ![V](ScreenShots/V.png) |
+| ![Metadata](ScreenShots/metadata_analyze.png) | ![Fingerprint](ScreenShots/fingerprint_analyzer.png) | ![V](ScreenShots/V.png) |
 
 ---
 
