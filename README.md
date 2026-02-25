@@ -8,17 +8,71 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ## Screenshots
 
-| Home | Text Anonymizer | Phishing Detector |
-|------|----------------|-------------------|
-| ![Home](ScreenShots/Home.png) | ![Mask PII](ScreenShots/mask_pii.png) | ![Sentinel AI](ScreenShots/sentinel_phishing_url.png) |
+### 🏠 Home
+![Home](ScreenShots/Home.png)
 
-| PostWatch AI | Password Manager | Temp Email |
-|-------------|-----------------|------------|
-| ![PostWatch](ScreenShots/postwatch_ai_phishing.png) | ![Password](ScreenShots/PM_generate_passwords.png) | ![Email](ScreenShots/temp_email_test.png) |
+---
 
-| Metadata Cleaner | Browser Fingerprint | V — AI Handler |
-|-----------------|---------------------|----------------|
-| ![Metadata](ScreenShots/metadata_analyze.png) | ![Fingerprint](ScreenShots/fingerprint_analyzer.png) | ![V](ScreenShots/V.png) |
+### 🔏 Text Anonymizer
+| Mask PII | Analyze Only |
+|----------|-------------|
+| ![Mask PII](ScreenShots/mask_pii.png) | ![Analyze Only](ScreenShots/analyze_only.png) |
+
+---
+
+### 🎣 Phishing Detector
+| Sentinel AI — Phishing URL | Sentinel AI — Safe URL |
+|---------------------------|------------------------|
+| ![Sentinel Phishing](ScreenShots/sentinel_phishing_url.png) | ![Sentinel Safe](ScreenShots/sentinel_safe_url.png) |
+
+| PostWatch AI — Phishing Email | PostWatch AI — Safe Email |
+|------------------------------|--------------------------|
+| ![PostWatch Phishing](ScreenShots/postwatch_ai_phishing.png) | ![PostWatch Safe](ScreenShots/postwatch_ai_safe.png) |
+
+| Pattern Mode — Phishing | Pattern Mode — Safe |
+|------------------------|---------------------|
+| ![Pattern Phishing](ScreenShots/pattern_mode_phishing.png) | ![Pattern Safe](ScreenShots/pattern_mode_safe.png) |
+
+---
+
+### 🔑 Password Manager
+| Generate Passwords | Check Strength | Breach Check |
+|-------------------|----------------|--------------|
+| ![Generate](ScreenShots/PM_generate_passwords.png) | ![Strength](ScreenShots/PM_check_strength.png) | ![Breach](ScreenShots/PM_breach_check.png) |
+
+---
+
+### 📧 Temp Email
+| Inbox | Rate Limits |
+|-------|-------------|
+| ![Temp Email](ScreenShots/temp_email_test.png) | ![Limits](ScreenShots/temp_email_limits.png) |
+
+---
+
+### 📸 Image Metadata Cleaner
+| Analyze | Clean |
+|---------|-------|
+| ![Metadata Analyze](ScreenShots/metadata_analyze.png) | ![Metadata Cleaner](ScreenShots/metadata_cleaner.png) |
+
+---
+
+### 🌐 WebRTC Leak Test
+![IP Leak Test](ScreenShots/ip_leak_test.png)
+
+---
+
+### 🔍 Browser Fingerprint Analyzer
+![Fingerprint Analyzer](ScreenShots/fingerprint_analyzer.png)
+
+---
+
+### 🤖 V — AI Handler
+![V AI Handler](ScreenShots/V.png)
+
+---
+
+### 📡 WIRE Feed
+![Wire Feed](ScreenShots/wire.png)
 
 ---
 
@@ -188,8 +242,8 @@ NetRunner/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/netrunner.git
-cd netrunner
+git clone https://github.com/beratfoglu/NetRunner.git
+cd NetRunner
 ```
 
 ### 2. Install backend dependencies
