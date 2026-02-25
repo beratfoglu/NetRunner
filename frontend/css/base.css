@@ -1,0 +1,249 @@
+/*
+  NetRunner — Base Styles
+  -----------------------
+  CSS reset, body, and fundamental HTML elements.
+*/
+
+/* ── Reset ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ── Body ── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: none; /* Custom cursor */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: var(--z-background);
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+h1 { font-size: var(--text-4xl); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-2xl); }
+h4 { font-size: var(--text-xl); }
+h5 { font-size: var(--text-lg); }
+h6 { font-size: var(--text-base); }
+
+p {
+  margin-bottom: var(--space-md);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent2);
+}
+
+/* ── Code ── */
+code, pre {
+  font-family: var(--font-mono);
+  background: var(--surface);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+}
+
+pre {
+  padding: var(--space-md);
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* ── Lists ── */
+ul, ol {
+  list-style: none;
+}
+
+/* ── Images ── */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Buttons reset ── */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  background: none;
+  cursor: none; /* Custom cursor */
+}
+
+/* ── Inputs reset ── */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  outline: none;
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--accent);
+  color: #000;
+}
+
+::-moz-selection {
+  background: var(--accent);
+  color: #000;
+}
+
+/* ── Scrollbar (Webkit) ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent3);
+}
+
+/* ── Utility classes ── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Mobile fallback - disable custom cursor */
+@media (max-width: 768px) {
+  body {
+    cursor: auto;
+  }
+  
+  button,
+  input,
+  textarea,
+  select,
+  a {
+    cursor: pointer;
+  }
+}
+/* ═══════════════════════════════════════════════════════════════════
+   CURSOR - HIDE DEFAULT
+   ═══════════════════════════════════════════════════════════════════ */
+
+* {
+  cursor: none !important;  /* Tüm default cursor'ları gizle */
+}
+
+body {
+  cursor: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CUSTOM CURSOR - NEON BLUE & ORANGE
+   ═══════════════════════════════════════════════════════════════════ */
+
+.cursor {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: #00e5ff;  /* Cyan/Electric Blue */
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s ease, background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 
+    0 0 10px rgba(0, 229, 255, 0.8),
+    0 0 20px rgba(0, 229, 255, 0.4),
+    0 0 30px rgba(0, 229, 255, 0.2);
+}
+
+.cursor-ring {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(255, 107, 53, 0.6);  /* Neon Orange */
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 0 15px rgba(255, 107, 53, 0.4),
+    0 0 30px rgba(255, 107, 53, 0.2),
+    0 0 45px rgba(255, 107, 53, 0.1);
+}
+
+/* Hover - Colors swap and intensify */
+.cursor.hover {
+  width: 12px;
+  height: 12px;
+  background: #ff6b35;  /* Orange center on hover */
+  box-shadow: 
+    0 0 15px rgba(255, 107, 53, 1),
+    0 0 30px rgba(255, 107, 53, 0.6),
+    0 0 45px rgba(255, 107, 53, 0.3);
+}
+
+.cursor-ring.hover {
+  width: 48px;
+  height: 48px;
+  border-color: rgba(0, 229, 255, 0.8);  /* Cyan ring on hover */
+  border-width: 3px;
+  box-shadow: 
+    0 0 20px rgba(0, 229, 255, 0.6),
+    0 0 40px rgba(0, 229, 255, 0.3),
+    0 0 60px rgba(0, 229, 255, 0.2);
+}
+
+/* For clickable elements, still hide default */
+button, a, input, textarea, select, .clickable {
+  cursor: none !important;
+}

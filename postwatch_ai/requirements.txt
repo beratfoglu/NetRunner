@@ -1,0 +1,14 @@
+# ─── NetRunner — PostWatch AI ────────────────────────────────────
+# Email Phishing Detector (DistilBERT)
+#
+# Kurulum:
+#   pip install -r requirements.txt
+#
+# NOT: Model dosyaları (~250MB) ayrıca indirilmeli.
+#      Bkz. README.md → PostWatch AI kurulum adımları.
+
+flask==3.0.0
+flask-cors==4.0.0
+transformers==4.37.2
+torch==2.2.0
+tokenizers==0.15.1

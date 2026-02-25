@@ -1,0 +1,117 @@
+/*
+  NetRunner — CSS Variables
+  -------------------------
+  All design tokens in one place.
+  Cyberpunk-inspired color palette.
+*/
+
+:root {
+  /* ── Colors ── */
+  --bg: #0a0e14;
+  --bg2: #0f1419;
+  --bg3: #141a21;
+  --surface: #1a2029;
+  --surface2: #202834;
+  --border: #2a3442;
+  
+  /* Accent colors - NetRunner green */
+  --accent: #00ffaa;
+  --accent2: #00d489;
+  --accent3: #00a86b;
+  
+  /* Cyberpunk highlights */
+  --cyber: #ff006e;
+  --cyber2: #8338ec;
+  
+  /* Status colors */
+  --green: #00ff88;
+  --red: #ff4466;
+  --yellow: #ffd60a;
+  
+  /* Text colors */
+  --text: #e0e6ed;
+  --text2: #8896a4;
+  --text3: #4a5a6a;
+  
+  /* ── Typography ── */
+  --font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+  --font-display: 'Orbitron', 'Impact', sans-serif;
+  
+  /* Font sizes */
+  --text-xs: 10px;
+  --text-sm: 11px;
+  --text-base: 13px;
+  --text-lg: 15px;
+  --text-xl: 18px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 48px;
+  
+  /* ── Spacing ── */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  
+  /* ── Borders ── */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  
+  /* ── Shadows ── */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  
+  /* Glow effects */
+  --glow-accent: 0 0 12px var(--accent);
+  --glow-cyber: 0 0 16px var(--cyber);
+  --glow-green: 0 0 10px var(--green);
+  
+  /* ── Transitions ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  
+  /* ── Z-index layers ── */
+  --z-background: 0;
+  --z-content: 1;
+  --z-nav: 100;
+  --z-modal: 200;
+  --z-toast: 300;
+  --z-cursor: 9999;
+}
+
+/* Dark mode overrides (future-proof) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    :root {
+  /* ─── EXISTING COLORS ─── */
+  --bg: #0a0e1a;
+  --surface: #141827;
+  --border: #1e2738;
+  
+  --text: #e8ecf5;
+  --text2: #9ca3b8;
+  --text3: #6b7280;
+  
+  --accent: #00ffaa;  /* Cyan/Green */
+  --green: #00ff88;
+  --red: #ff4466;
+  --yellow: #ffd60a;
+  --pink: #ff44aa;
+  
+  /* ─── NEW CYBERPUNK COLORS ─── */
+  --cyan: #00e5ff;      /* Electric Blue */
+  --purple: #b56aff;    /* Purple Neon */
+  --orange: #ff6b35;    /* Orange Glow */
+  --blue: #4d7cff;      /* Deep Blue */
+  --lime: #ccff00;      /* Lime Green */
+}
+  }
+}

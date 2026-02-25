@@ -1,0 +1,12 @@
+# ─── NetRunner — Backend Services ───────────────────────────────
+# Anonymizer, Temp Email, Breach Checker, Fingerprint, Metadata Cleaner
+#
+# Kurulum:
+#   pip install -r requirements.txt
+#   python -m spacy download en_core_web_md
+
+flask==3.0.0
+flask-cors==4.0.0
+requests==2.31.0
+spacy==3.7.2
+Pillow==10.2.0

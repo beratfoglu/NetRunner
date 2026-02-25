@@ -1,0 +1,550 @@
+/*
+  NetRunner — Animations
+  ---------------------
+  All keyframes, transitions, and motion effects.
+*/
+
+/* ── KEYFRAMES ── */
+
+/* Fade up entrance */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Pulse effect */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 10px var(--cyber);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+    box-shadow: 0 0 5px var(--cyber);
+  }
+}
+
+/* Blink cursor */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Spinner rotation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Grid shift background */
+@keyframes gridShift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+/* Orb float animations */
+@keyframes orbFloat1 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-40px, 30px);
+  }
+}
+
+@keyframes orbFloat2 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(30px, -40px);
+  }
+}
+
+@keyframes orbFloat3 {
+  0%, 100% {
+    transform: translate(-40%, -40%);
+  }
+  50% {
+    transform: translate(-45%, -35%);
+  }
+}
+
+/* Arrow pulse */
+@keyframes arrowPulse {
+  0%, 100% {
+    color: var(--text3);
+  }
+  50% {
+    color: var(--accent);
+  }
+}
+
+/* Glitch effect */
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 1px);
+    filter: hue-rotate(30deg);
+  }
+  40% {
+    transform: translate(2px, -1px);
+    filter: hue-rotate(-30deg);
+  }
+  60% {
+    transform: translate(-1px, 2px);
+  }
+  80% {
+    transform: translate(1px, -2px);
+  }
+  100% {
+    transform: translate(0);
+    filter: none;
+  }
+}
+
+/* Slide in from bottom */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── BACKGROUND EFFECTS ── */
+
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-background);
+  background-image: 
+    linear-gradient(var(--accent) 1px, transparent 1px),
+    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.03;
+  pointer-events: none;
+  animation: gridShift 30s linear infinite;
+}
+
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+  z-index: var(--z-background);
+}
+
+.orb1 {
+  width: 500px;
+  height: 500px;
+  background: rgba(0, 255, 170, 0.08);
+  top: -150px;
+  right: -150px;
+  animation: orbFloat1 10s ease-in-out infinite;
+}
+
+.orb2 {
+  width: 350px;
+  height: 350px;
+  background: rgba(255, 0, 110, 0.06);
+  bottom: -80px;
+  left: -80px;
+  animation: orbFloat2 12s ease-in-out infinite;
+}
+
+.orb3 {
+  width: 400px;
+  height: 400px;
+  background: rgba(131, 56, 236, 0.05);
+  top: 40%;
+  left: 40%;
+  animation: orbFloat3 14s ease-in-out infinite;
+}
+
+/* ── CUSTOM CURSOR ── */
+
+.cursor {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  transform: translate(-50%, -50%);
+  transition: width var(--transition-fast), height var(--transition-fast);
+  box-shadow: var(--glow-accent);
+}
+
+.cursor-ring {
+  position: fixed;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: calc(var(--z-cursor) - 1);
+  transform: translate(-50%, -50%);
+  transition: width var(--transition-fast), height var(--transition-fast);
+  opacity: 0.6;
+}
+
+.cursor.hover {
+  width: 10px;
+  height: 10px;
+  background: var(--cyber);
+  box-shadow: var(--glow-cyber);
+}
+
+.cursor-ring.hover {
+  width: 44px;
+  height: 44px;
+  border-color: var(--cyber);
+}
+
+/* ── SCROLL PROGRESS BAR ── */
+
+.progress-bar-scroll {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--cyber));
+  z-index: 9999;
+  width: 0%;
+  box-shadow: 0 0 10px var(--accent), 0 0 20px var(--cyber);
+  transition: width 0.1s ease-out;
+}
+
+/* ── REVEAL ON SCROLL ── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── LOADING SKELETON ── */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 25%,
+    var(--surface2) 50%,
+    var(--surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-line {
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.skeleton-box {
+  height: 60px;
+}
+
+/* ── HOVER EFFECTS ── */
+
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hover-glow {
+  transition: box-shadow var(--transition-base);
+}
+
+.hover-glow:hover {
+  box-shadow: var(--glow-accent);
+}
+
+/* ── RIPPLE EFFECT ── */
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 255, 170, 0.4);
+  transform: scale(0);
+  animation: rippleAnim 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes rippleAnim {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ── TOAST NOTIFICATIONS ── */
+
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toast {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+  max-width: 400px;
+  animation: toastSlide 0.3s ease, toastFade 0.3s 2.7s ease forwards;
+  backdrop-filter: blur(10px);
+}
+
+@keyframes toastSlide {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastFade {
+  to {
+    opacity: 0;
+    transform: translateX(400px);
+  }
+}
+
+.toast.success {
+  border-left: 3px solid var(--green);
+}
+
+.toast.error {
+  border-left: 3px solid var(--red);
+}
+
+.toast.warning {
+  border-left: 3px solid var(--yellow);
+}
+
+.toast-icon {
+  font-size: 20px;
+}
+
+.toast-content {
+  flex: 1;
+  font-size: var(--text-base);
+  color: var(--text);
+}
+
+/* ── DISABLED ANIMATIONS (Accessibility) ── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .cursor,
+  .cursor-ring,
+  .orb {
+    display: none;
+  }
+}
+/* ── LOGO GLITCH EFFECT ── */
+.logo:hover .logo-icon {
+  animation: logoGlitch 0.3s ease infinite;
+}
+
+@keyframes logoGlitchBlink {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  10% {
+    opacity: 0.7;
+    transform: scale(1.05) rotate(2deg);
+    filter: hue-rotate(90deg) saturate(2);
+  }
+  20% {
+    opacity: 0.3;
+    transform: scale(0.95) rotate(-2deg);
+    filter: hue-rotate(-90deg) saturate(3);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.02) rotate(1deg);
+    filter: hue-rotate(45deg);
+  }
+  40% {
+    opacity: 0.5;
+    transform: scale(0.98) rotate(-1deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  60% {
+    opacity: 0.8;
+    transform: scale(1.03) rotate(1.5deg);
+    filter: hue-rotate(-60deg);
+  }
+  70% {
+    opacity: 0.4;
+    transform: scale(0.97) rotate(-1.5deg);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1.01) rotate(0.5deg);
+  }
+  90% {
+    opacity: 0.6;
+    transform: scale(0.99) rotate(-0.5deg);
+  }
+}
+
+/* NetRunner text glitch on hover */
+.logo:hover {
+  animation: textGlitch 0.5s ease;
+}
+
+@keyframes textGlitch {
+  0%, 100% {
+    text-shadow: none;
+  }
+  25% {
+    text-shadow: -2px 0 var(--cyber), 2px 0 var(--cyber2);
+  }
+  50% {
+    text-shadow: 2px 0 var(--accent), -2px 0 var(--cyber);
+  }
+  75% {
+    text-shadow: -1px 0 var(--cyber2), 1px 0 var(--green);
+  }
+}
+/* ── H1 ANA BAŞLIK İÇİN GLITCH EFEKTİ ── */
+@keyframes h1Glitch {
+  0% {
+    text-shadow: 4px 0 var(--accent), -4px 0 var(--cyber);
+    transform: skew(0deg);
+  }
+  20% {
+    text-shadow: -4px 0 var(--red), 4px 0 var(--green);
+    transform: skew(-2deg);
+  }
+  40% {
+    text-shadow: 3px 0 var(--yellow), -3px 0 var(--accent);
+    transform: skew(0deg);
+  }
+  60% {
+    text-shadow: -2px 0 var(--cyber), 2px 0 var(--accent);
+    transform: skew(2deg);
+  }
+  80% {
+    text-shadow: 4px 0 var(--green), -4px 0 var(--red);
+    transform: skew(0deg);
+  }
+  100% {
+    text-shadow: none;
+    transform: skew(0deg);
+  }
+}
+
+/* Başlık yüklendiğinde bir kez çalışan "Giriş Efekti" */
+@keyframes h1Entrance {
+  0% {
+    opacity: 0;
+    letter-spacing: -10px;
+    filter: blur(10px);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(5px);
+    text-shadow: 10px 0 var(--accent), -10px 0 var(--red);
+  }
+  100% {
+    opacity: 1;
+    letter-spacing: -3px; /* Senin orijinal ayarın */
+    filter: blur(0);
+    text-shadow: none;
+  }
+}

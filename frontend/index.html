@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NetRunner — Digital Privacy Arsenal</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+
+<!-- CSS -->
+<link rel="stylesheet" href="css/variables.css"/>
+<link rel="stylesheet" href="css/base.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/layout.css"/>
+<link rel="stylesheet" href="css/pages.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- Scroll Progress Bar -->
+<div class="progress-bar-scroll" id="progress-bar"></div>
+
+<!-- Background Effects -->
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- NAVIGATION -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<nav id="main-nav">
+  <div class="logo" onclick="showPage('landing')">
+    <div class="logo-icon">◬</div>
+    NetRunner
+  </div>
+  
+  <div class="nav-links">
+    <button class="nav-btn active" id="nav-landing" onclick="showPage('landing')" data-en="Home" data-tr="Ana Sayfa">Home</button>
+    <button class="nav-btn" id="nav-dashboard" onclick="showPage('dashboard')" data-en="Dashboard" data-tr="Panel">Dashboard</button>
+  </div>
+  
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('tr')">TR</button>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="showPage('dashboard')" data-en="Jack In →" data-tr="Baglan →">Jack In →</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- LANDING PAGE -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div id="landing" class="page active">
+  
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span data-en="Cybersecurity Toolkit" data-tr="Siber Güvenlik Araç Seti">Cybersecurity Toolkit</span>
+    </div>
+    
+    <h1>NetRunner</h1>
+    
+    <p class="hero-sub" data-en="Leave no trace. Trust no node." data-tr="İz bırakma. Düğüme güvenme.">
+      Leave no trace. Trust no node.
+    </p>
+    
+    <p class="hero-desc" data-en="NetRunner combines NLP-powered text anonymization, AI phishing detection, cryptographically secure password management, and disposable email generation — all in one cyberpunk-inspired privacy arsenal." data-tr="NetRunner; NLP tabanlı metin anonimleştirme, yapay zeka phishing tespiti, kriptografik güvenli şifre yönetimi ve geçici e-posta üretimini tek bir cyberpunk-esintili gizlilik cephaneliğinde birleştiriyor.">
+      NetRunner combines NLP-powered text anonymization, AI phishing detection, cryptographically secure password management, and disposable email generation — all in one cyberpunk-inspired privacy arsenal.
+    </p>
+    
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="showPage('dashboard')">
+        <span data-en="Initialize System" data-tr="Sistemi Başlat">Initialize System</span> →
+      </button>
+      <button class="btn btn-secondary">
+        <span>Source Code</span> ↗
+      </button>
+    </div>
+    
+    <!-- Terminal Preview -->
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="dot r"></div>
+        <div class="dot y"></div>
+        <div class="dot g"></div>
+        <span class="terminal-title">netrunner — anonymizer</span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line"><span class="t-prompt">$ </span><span>netrunner.analyze("My name is John Doe, email: john@example.com")</span></div>
+        <div class="t-line t-out">🔍 Scanning for PII entities...</div>
+        <div class="t-line t-out"><span class="t-yellow">PERSON</span> detected → "John Doe" (confidence: 98.2%)</div>
+        <div class="t-line t-out"><span class="t-yellow">EMAIL</span> detected → "john@example.com" (confidence: 99.9%)</div>
+        <div class="t-line t-out">Applying anonymization mask...</div>
+        <div class="t-line t-out"><span class="t-green">✓ Output:</span> "My name is <span class="t-green">[PERSON]</span>, email: <span class="t-green">[EMAIL]</span>"</div>
+        <div class="t-line"><span class="t-prompt">$ </span><span class="t-cursor"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="section">
+    <div class="stats-row reveal">
+      <div class="stat-item">
+        <span class="stat-num" data-target="8">0</span>
+        <div class="stat-lbl" data-en="PRIVACY TOOLS" data-tr="GİZLİLİK ARACI">PRIVACY TOOLS</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="100">0</span>
+        <div class="stat-lbl" data-en="% NO DATA STORED" data-tr="% VERİ SAKLANMAZ">% NO DATA STORED</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="0">0</span>
+        <div class="stat-lbl" data-en="TRACES LEFT" data-tr="BIRAKILMIŞ İZ">TRACES LEFT</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tools Section -->
+  <div class="section" style="padding-top:0;">
+    <p class="section-label reveal-left" data-en="// TOOLS" data-tr="// ARAÇLAR">// TOOLS</p>
+    <h2 class="section-title reveal-left" data-en="Eight tools. One runner." data-tr="Sekiz araç. Tek runner.">Eight tools. One runner.</h2>
+    <p class="section-desc reveal-left" data-en="Each module is independently powerful. Together, they form a complete privacy layer for your digital life." data-tr="Her modül kendi başına güçlüdür. Birlikte, dijital yaşamın için eksiksiz bir gizlilik katmanı oluştururlar.">
+      Each module is independently powerful. Together, they form a complete privacy layer for your digital life.
+    </p>
+
+    <div class="tools-grid">
+      <div class="tool-card reveal" onclick="openTool('anonymizer')">
+        <div class="tool-icon">🔏</div>
+        <div class="tool-name" data-en="Text Anonymizer" data-tr="Metin Anonimleştirici">Text Anonymizer</div>
+        <div class="tool-desc" data-en="Detects and masks PII using transformer-based NER. Names, phones, emails, IDs — nothing leaks." data-tr="Transformer tabanlı NER ile kişisel bilgileri tespit eder ve maskeler.">
+          Detects and masks PII using transformer-based NER. Names, phones, emails, IDs — nothing leaks.
+        </div>
+        <span class="tag">★ NLP Core</span>
+      </div>
+
+      <div class="tool-card reveal" onclick="openTool('phishing')">
+        <div class="tool-icon">🎣</div>
+        <div class="tool-name" data-en="Phishing Detector" data-tr="Phishing Dedektörü">Phishing Detector</div>
+        <div class="tool-desc" data-en="Powered by Sentinel AI. Analyzes URLs and emails with ML-driven risk scoring." data-tr="Sentinel AI ile güçlendirilmiş. URL ve e-postaları ML tabanlı risk skorlamasıyla analiz eder.">
+          Powered by Sentinel AI. Analyzes URLs and emails with ML-driven risk scoring.
+        </div>
+        <span class="tag">★ Sentinel AI</span>
+      </div>
+
+      <div class="tool-card reveal" onclick="openTool('password')">
+        <div class="tool-icon">🔑</div>
+        <div class="tool-name" data-en="Password Manager" data-tr="Şifre Yöneticisi">Password Manager</div>
+        <div class="tool-desc" data-en="Generate strong passwords with entropy scoring. Check against HIBP breach database." data-tr="Entropi skorlamasıyla güçlü şifreler üret. HIBP ihlal veritabanına karşı kontrol et.">
+          Generate strong passwords with entropy scoring. Check against HIBP breach database.
+        </div>
+        <span class="tag">HIBP + Rule-based</span>
+      </div>
+
+      <div class="tool-card reveal" onclick="openTool('email')">
+        <div class="tool-icon">📧</div>
+        <div class="tool-name" data-en="Temp Email" data-tr="Geçici E-posta">Temp Email</div>
+        <div class="tool-desc" data-en="Instantly generate disposable email addresses. Real inbox, no registration, no traces." data-tr="Anında tek kullanımlık e-posta adresleri üret. Gerçek gelen kutusu, kayıt yok, iz yok.">
+          Instantly generate disposable email addresses. Real inbox, no registration, no traces.
+        </div>
+        <span class="tag">Mail.tm API</span>
+      </div>
+      <div class="tool-card reveal" onclick="openTool('metadata')">
+  <div class="tool-icon">📸</div>
+  <div class="tool-name">Image Metadata Cleaner</div>
+  <div class="tool-desc">Remove GPS, camera, and timestamp data from photos before sharing. Protect your location privacy.</div>
+  <span class="tag">EXIF Remover</span>
+</div>
+     <div class="tool-card reveal" onclick="openTool('webrtc')">
+        <div class="tool-icon">🌐</div>
+        <div class="tool-name">WebRTC Leak Test</div>
+        <div class="tool-desc">Check if your VPN is leaking your real IP address through WebRTC browser vulnerabilities.</div>
+        <span class="tag">VPN Security</span>
+      </div>
+      <div class="tool-card reveal" onclick="openTool('breach')">
+        <div class="tool-icon">🔴</div>
+        <div class="tool-name" data-en="Email Breach Checker" data-tr="E-posta İhlal Denetleyicisi">Email Breach Checker</div>
+        <div class="tool-desc" data-en="Check if your email was exposed in known data breaches using the HaveIBeenPwned database." data-tr="E-postanızın bilinen veri ihlallerinde ele geçirilip geçirilmediğini kontrol edin.">Check if your email was exposed in known data breaches using the HaveIBeenPwned database.</div>
+        <span class="tag">HIBP API</span>
+      </div>
+      <div class="tool-card reveal" onclick="openTool('fingerprint')">
+        <div class="tool-icon">🔍</div>
+        <div class="tool-name" data-en="Browser Fingerprint" data-tr="Tarayıcı Parmak İzi">Browser Fingerprint</div>
+        <div class="tool-desc" data-en="Discover how unique and trackable your browser is. Canvas, WebGL, audio and font-based analysis." data-tr="Tarayıcınızın ne kadar benzersiz ve izlenebilir olduğunu keşfedin.">Discover how unique and trackable your browser is. Canvas, WebGL, audio and font-based analysis.</div>
+        <span class="tag">Entropy Analysis</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture Section -->
+  <div class="section" style="padding-top:0;">
+    <p class="section-label reveal" data-en="// ARCHITECTURE" data-tr="// MİMARİ">// ARCHITECTURE</p>
+    <h2 class="section-title reveal" data-en="Microservice design." data-tr="Mikroservis tasarımı.">Microservice design.</h2>
+    <p class="section-desc reveal" data-en="Sentinel AI runs as an independent microservice, communicating via REST API." data-tr="Sentinel AI bağımsız bir mikroservis olarak çalışır ve REST API üzerinden iletişim kurar.">
+      Sentinel AI runs as an independent microservice, communicating via REST API.
+    </p>
+
+    <div class="arch-box reveal">
+      <div class="arch-node">
+        <div class="arch-node-title">HTML Frontend</div>
+        <div class="arch-node-desc">Vanilla JS · CSS</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node">
+        <div class="arch-node-title">Flask Backend</div>
+        <div class="arch-node-desc">spaCy · SQLite<br>Mail.tm API</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node" style="border-color:rgba(0,255,170,0.3);">
+        <div class="arch-node-title" style="color:var(--green);">Sentinel AI</div>
+        <div class="arch-node-desc">Microservice · REST<br>Phishing ML Model</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- DASHBOARD -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div id="dashboard" class="page">
+  <div class="dash-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label" data-en="TOOLS" data-tr="ARAÇLAR">TOOLS</div>
+
+        <div class="sidebar-item active" onclick="openTool('anonymizer')" id="sb-anonymizer">
+          <span class="sidebar-icon">🔏</span>
+          <span data-en="Text Anonymizer" data-tr="Metin Anonimleştirici">Text Anonymizer</span>
+        </div>
+
+        <div class="sidebar-item" onclick="openTool('phishing')" id="sb-phishing">
+          <span class="sidebar-icon">🎣</span>
+          <span data-en="Phishing Detector" data-tr="Phishing Dedektörü">Phishing Detector</span>
+        </div>
+
+        <div class="sidebar-item" onclick="openTool('password')" id="sb-password">
+          <span class="sidebar-icon">🔑</span>
+          <span data-en="Password Manager" data-tr="Şifre Yöneticisi">Password Manager</span>
+        </div>
+
+        <div class="sidebar-item" onclick="openTool('email')" id="sb-email">
+          <span class="sidebar-icon">📧</span>
+          <span data-en="Temp Email" data-tr="Geçici E-posta">Temp Email</span>
+        </div>
+        <div class="sidebar-item" onclick="openTool('metadata')">
+  <span class="sidebar-icon">📸</span>
+  <span data-en="Metadata Cleaner" data-tr="Metadata Temizleyici">Metadata Cleaner</span>
+</div>
+          <div class="sidebar-item" onclick="openTool('webrtc')">
+  <span class="sidebar-icon">🌐</span>
+  <span data-en="WebRTC Leak Test" data-tr="WebRTC Test">WebRTC Leak Test</span>
+</div>
+        <div class="sidebar-item" onclick="openTool('breach')" id="sb-breach">
+          <span class="sidebar-icon">🔴</span>
+          <span>Email Breach</span>
+        </div>
+
+        <div class="sidebar-item" onclick="openTool('fingerprint')" id="sb-fingerprint">
+  <span class="sidebar-icon">🔍</span>
+  <span>Browser Fingerprint</span>
+</div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label" data-en="SESSION" data-tr="OTURUM">SESSION</div>
+        <div style="padding:12px;background:var(--surface);border-radius:8px;font-size:11px;color:var(--text2);">
+          <div style="color:var(--green);margin-bottom:4px;">● <span data-en="Anonymous session" data-tr="Anonim oturum">Anonymous session</span></div>
+          <div data-en="No data stored server-side" data-tr="Sunucuda veri saklanmıyor">No data stored server-side</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Panel -->
+    <main class="main-panel">
+
+      <!-- ══ ANONYMIZER ══ -->
+      
+      <div class="tool-panel active" id="anonymizer-tool">
+        <div class="panel-header">
+          <div class="panel-title">🔏 <span data-en="Text Anonymizer" data-tr="Metin Anonimleştirici">Text Anonymizer</span></div>
+          <div class="panel-desc" data-en="Paste any text. NetRunner detects and masks PII using NLP — names, phones, emails, IDs, IBANs." data-tr="Herhangi bir metin yapıştırın. NetRunner, NLP kullanarak kişisel bilgileri tespit eder ve maskeler.">Paste any text. NetRunner detects and masks PII using NLP — names, phones, emails, IDs, IBANs.</div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" onclick="setAnonTab('mask')" id="tab-mask" data-en="Mask PII" data-tr="PII Maskele">Mask PII</button>
+          <button class="tab" onclick="setAnonTab('analyze')" id="tab-analyze" data-en="Analyze Only" data-tr="Sadece Analiz Et">Analyze Only</button>
+        </div>
+        <div class="input-group">
+          <label class="input-label" data-en="INPUT TEXT" data-tr="GİRİŞ METNİ">INPUT TEXT</label>
+          <textarea id="anon-input" class="textarea" placeholder="Hello, my name is John Doe. My phone is 555-123-4567 and I live at 123 Main Street, New York. My TC number is 12345678901."></textarea>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px;" id="anon-mask-options">
+          <button class="btn btn-primary" onclick="runAnonymizer()" id="anon-btn"><span data-en="Anonymize Text" data-tr="Metni Anonimleştir">Anonymize Text</span></button>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);">
+            <input type="checkbox" id="anon-redact">
+            <span data-en="Full redaction [TYPE]" data-tr="Tam silme [TÜR]">Full redaction [TYPE]</span>
+          </label>
+        </div>
+        <div style="display:none;" id="anon-analyze-options">
+          <button class="btn btn-primary" onclick="runAnalyzeOnly()" id="anon-analyze-btn"><span data-en="Analyze & Detect PII" data-tr="Analiz Et ve PII Tespit Et">Analyze & Detect PII</span></button>
+        </div>
+
+        <!-- Mask result -->
+        <div class="result-box" id="anon-result">
+          <div class="result-label" data-en="ANONYMIZED OUTPUT" data-tr="ANONİMLEŞTİRİLMİŞ ÇIKTI">ANONYMIZED OUTPUT</div>
+          <div class="result-content" id="anon-output"></div>
+          <div class="pii-tags" id="anon-tags"></div>
+          <div class="score-row" style="margin-top:20px;">
+            <div class="score-label" data-en="Entities found" data-tr="Bulunan varlık">Entities found</div>
+            <div class="score-bar-wrap"><div class="progress-bar" id="anon-bar" style="background:var(--red);"></div></div>
+            <div class="score-value" id="anon-score" style="color:var(--red);">0</div>
+          </div>
+          <div class="score-row">
+            <div class="score-label" data-en="Anonymization" data-tr="Anonimleştirme">Anonymization</div>
+            <div class="score-bar-wrap"><div class="progress-bar" id="anon-bar2" style="background:var(--green);"></div></div>
+            <div class="score-value" id="anon-score2" style="color:var(--green);">0%</div>
+          </div>
+          <button class="copy-btn" style="margin-top:16px;" onclick="copyResult('anon-output')" data-en="Copy result" data-tr="Sonucu kopyala">Copy result</button>
+        </div>
+
+        <!-- Analyze Only result -->
+        <div class="result-box" id="analyze-result">
+          <div class="result-label" data-en="PII ANALYSIS REPORT" data-tr="KİŞİSEL VERİ ANALİZ RAPORU">PII ANALYSIS REPORT</div>
+          <div id="analyze-summary" style="font-size:13px;color:var(--text2);margin-bottom:16px;"></div>
+          <div class="entity-grid" id="analyze-entities"></div>
+          <div style="margin-top:20px;">
+            <div class="result-label" data-en="ORIGINAL TEXT (highlighted)" data-tr="ORİJİNAL METİN (işaretli)">ORIGINAL TEXT (highlighted)</div>
+            <div class="result-content" id="analyze-highlighted" style="margin-top:8px;line-height:2;"></div>
+          </div>
+        </div>
+      </div>
+      <!-- /anonymizer-tool -->
+
+      <!-- ══ PHISHING ══ -->
+      
+      <div class="tool-panel" id="phishing-tool">
+        <div class="panel-header">
+          <div class="panel-title">🎣 <span data-en="Phishing Detector" data-tr="Phishing Dedektörü">Phishing Detector</span></div>
+          <div class="panel-desc" data-en="Powered by Sentinel AI. Analyze URLs with the ML model, or paste email content for pattern-based risk assessment." data-tr="Sentinel AI ile güçlendirilmiş. URL'leri ML modeli ile analiz edin veya e-posta içeriğini yapıştırın.">Powered by Sentinel AI. Analyze URLs with the ML model, or paste email content for pattern-based risk assessment.</div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" onclick="setPhishTab('url')" id="ptab-url">URL</button>
+          <button class="tab" onclick="setPhishTab('email')" id="ptab-email" data-en="Email Content" data-tr="E-posta İçeriği">Email Content</button>
+        </div>
+        <div id="phish-url-group">
+          <div class="input-group">
+            <label class="input-label">URL</label>
+            <input type="text" class="input" id="phish-input" placeholder="https://secure-paypal-login.xyz/account/verify"/>
+          </div>
+          <button class="btn btn-primary" onclick="runPhishing()" id="phish-btn"><span data-en="Analyze with Sentinel AI" data-tr="Sentinel AI ile Analiz Et">Analyze with Sentinel AI</span></button>
+        </div>
+        <div id="phish-email-group" style="display:none;">
+          <!-- MODE TOGGLE -->
+<div style="display: flex; gap: 8px; margin-bottom: 16px;">
+  <button class="tab active" onclick="setEmailPhishMode('ai')" id="email-mode-ai" style="flex: 1;">
+    <span data-en="🤖 AI Mode (Recommended)" data-tr="🤖 AI Modu (Önerilen)">🤖 AI Mode (Recommended)</span>
+  </button>
+  <button class="tab" onclick="setEmailPhishMode('pattern')" id="email-mode-pattern" style="flex: 1;">
+    <span data-en="📋 Pattern Mode (Fast)" data-tr="📋 Pattern Modu (Hızlı)">📋 Pattern Mode (Fast)</span>
+  </button>
+</div>
+          <div class="input-group">
+            <label class="input-label" data-en="PASTE EMAIL CONTENT" data-tr="E-POSTA İÇERİĞİNİ YAPIŞTIRIN">PASTE EMAIL CONTENT</label>
+            <textarea class="textarea" id="phish-email-input" placeholder="Dear user, your account will be suspended within 24 hours. Click here immediately to verify your credentials and avoid losing access..." style="min-height:160px;"></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="runEmailPhish()" id="phish-email-btn">
+  <span data-en="Analyze with PostWatch AI" data-tr="PostWatch AI ile Ana liz Et">Analyze with PostWatch AI</span>
+</button>
+        </div>
+
+        <div class="result-box" id="phish-result">
+          <div class="result-label" data-en="SENTINEL AI — RISK REPORT" data-tr="SENTINEL AI — RİSK RAPORU">SENTINEL AI — RISK REPORT</div>
+          <div id="phish-badge"></div>
+          <div class="score-row" style="margin-top:20px;">
+            <div class="score-label" data-en="Phishing Risk" data-tr="Phishing Riski">Phishing Risk</div>
+            <div class="score-bar-wrap"><div class="progress-bar" id="phish-bar"></div></div>
+            <div class="score-value" id="phish-score">0%</div>
+          </div>
+          <div class="features-list" id="phish-features" style="margin-top:16px;"></div>
+        </div>
+
+        <!-- Email analysis result -->
+        <div class="result-box" id="email-phish-result">
+          <div class="result-label" data-en="EMAIL CONTENT — RISK REPORT" data-tr="E-POSTA İÇERİĞİ — RİSK RAPORU">EMAIL CONTENT — RISK REPORT</div>
+          <div id="email-phish-badge"></div>
+          <div class="score-row" style="margin-top:16px;">
+            <div class="score-label" data-en="Phishing Risk" data-tr="Phishing Riski">Phishing Risk</div>
+            <div class="score-bar-wrap"><div class="progress-bar" id="email-phish-bar"></div></div>
+            <div class="score-value" id="email-phish-score">0%</div>
+          </div>
+          <div class="email-score-grid" id="email-score-grid" style="margin-top:16px;"></div>
+          <div style="margin-top:16px;" id="email-keywords-section">
+            <div class="result-label" data-en="DETECTED KEYWORDS" data-tr="TESPİT EDİLEN ANAHTAR KELİMELER">DETECTED KEYWORDS</div>
+            <div class="pii-tags" id="email-keywords" style="margin-top:8px;"></div>
+          </div>
+        </div>
+      </div>
+      <!-- /phishing-tool -->
+
+      <!-- ══ PASSWORD MANAGER ══ -->
+      <div class="tool-panel" id="password-tool">
+        <div class="panel-header">
+          <div class="panel-title">🔑 <span data-en="Password Manager" data-tr="Şifre Yöneticisi">Password Manager</span></div>
+          <div class="panel-desc" data-en="Generate cryptographically secure passwords with entropy analysis. Check your existing passwords against the HIBP breach database." data-tr="Kriptografik olarak güvenli şifreler üretin. Mevcut şifrelerinizi HIBP ihlal veritabanına karşı kontrol edin.">Generate cryptographically secure passwords with entropy analysis. Check your existing passwords against the HIBP breach database.</div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" onclick="setPwTab('generate')" id="ptab-gen" data-en="Generate" data-tr="Üret">Generate</button>
+          <button class="tab" onclick="setPwTab('check')" id="ptab-check" data-en="Check Strength" data-tr="Güç Kontrol">Check Strength</button>
+          <button class="tab" onclick="setPwTab('breach')" id="ptab-breach" data-en="Breach Check" data-tr="İhlal Kontrolü">Breach Check</button>
+        </div>
+
+        <!-- GENERATE TAB -->
+        <div id="pw-generate">
+          <div class="pass-slider-wrap">
+            <div class="pass-slider-label">
+              <span data-en="Password Length" data-tr="Şifre Uzunluğu">Password Length</span>
+              <span id="pw-len-val">20</span>
+            </div>
+            <input type="range" min="8" max="64" value="20" id="pw-length" oninput="updateLenLabel(this.value)">
+          </div>
+          <div class="pass-options">
+            <label class="pass-option"><input type="checkbox" id="pw-upper" checked><span data-en="Uppercase (A-Z)" data-tr="Büyük harf (A-Z)">Uppercase (A-Z)</span></label>
+            <label class="pass-option"><input type="checkbox" id="pw-lower" checked><span data-en="Lowercase (a-z)" data-tr="Küçük harf (a-z)">Lowercase (a-z)</span></label>
+            <label class="pass-option"><input type="checkbox" id="pw-num" checked><span data-en="Numbers (0-9)" data-tr="Rakam (0-9)">Numbers (0-9)</span></label>
+            <label class="pass-option"><input type="checkbox" id="pw-sym" checked><span data-en="Symbols (!@#...)" data-tr="Sembol (!@#...)">Symbols (!@#...)</span></label>
+            <label class="pass-option"><input type="checkbox" id="pw-noambig"><span data-en="Exclude ambiguous (0,O,l,I)" data-tr="Benzer karakterleri dışla (0,O,l,I)">Exclude ambiguous</span></label>
+          </div>
+          <button class="btn btn-primary" onclick="generatePassword()"><span data-en="Generate Password" data-tr="Şifre Üret">Generate Password</span></button>
+          <div class="gen-password" id="pw-display">
+            <span id="pw-value" style="color:var(--text3);" data-en="Click generate..." data-tr="Üret'e tıklayın...">Click generate...</span>
+            <div style="display:flex;gap:8px;">
+              <button class="copy-btn" onclick="copyPw()" data-en="Copy" data-tr="Kopyala">Copy</button>
+              <button class="copy-btn" onclick="generatePassword()" style="color:var(--accent);border-color:rgba(0,255,170,0.3);">↻</button>
+            </div>
+          </div>
+
+          <!-- Entropy gauge -->
+          <div class="entropy-gauge" id="pw-entropy-section" style="display:none;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:11px;color:var(--text2);" data-en="Entropy" data-tr="Entropi">Entropy</span>
+              <span style="font-size:13px;font-weight:700;" id="pw-entropy-val" style="color:var(--green);">—</span>
+            </div>
+            <div class="entropy-track"><div class="entropy-fill" id="pw-entropy-fill"></div></div>
+            <div class="entropy-labels">
+              <span>Weak</span><span>Fair</span><span>Good</span><span>Strong</span><span>Excellent</span>
+            </div>
+            <div style="margin-top:12px;font-size:11px;color:var(--text3);" id="pw-entropy-note"></div>
+          </div>
+        </div>
+
+        <!-- CHECK STRENGTH TAB -->
+        <div id="pw-check" style="display:none;">
+          <div class="input-group">
+            <label class="input-label" data-en="YOUR PASSWORD" data-tr="ŞİFRENİZ">YOUR PASSWORD</label>
+            <div class="input-wrapper">
+              <input type="password" class="input" id="pw-check-input" placeholder="Enter password to analyze..." oninput="checkPassword(this.value)" style="padding-right:50px;"/>
+              <button onclick="togglePwVisibility()" id="pw-eye" class="pw-toggle">
+                <svg><path d="M1 9s4-5 11-5 11 5 11 5-4 5-11 5S1 9 1 9z"/><circle cx="12" cy="9" r="3"/></svg>
+              </button>
+            </div>
+            <div class="pass-meter" style="margin-top:10px;"><div class="pass-meter-bar" id="pw-meter"></div></div>
+            <div class="pass-strength" id="pw-strength-label" style="color:var(--text3);" data-en="Type a password..." data-tr="Şifre yazın...">Type a password...</div>
+          </div>
+          <div class="result-box" id="pw-check-result">
+            <div class="result-label" data-en="STRENGTH ANALYSIS" data-tr="GÜÇ ANALİZİ">STRENGTH ANALYSIS</div>
+            <div class="check-list" id="pw-analysis"></div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+              <button class="btn btn-primary btn-sm" onclick="checkBreach(document.getElementById('pw-check-input').value)">
+                <span data-en="Also check in HIBP breach database →" data-tr="HIBP ihlal veritabanında da kontrol et →">Also check in HIBP breach database →</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BREACH CHECK TAB -->
+        <div id="pw-breach" style="display:none;">
+          <div style="background:rgba(0,255,170,0.04);border:1px solid rgba(0,255,170,0.15);border-radius:8px;padding:16px;margin-bottom:20px;font-size:12px;color:var(--text2);line-height:1.6;">
+            🔒 <strong style="color:var(--text);" data-en="Privacy protected:" data-tr="Gizlilik korumalı:">Privacy protected:</strong>
+            <span data-en="Your password is never sent to any server. We use the k-Anonymity model — only the first 5 characters of the SHA-1 hash are sent to HIBP API." data-tr="Şifreniz hiçbir sunucuya gönderilmez. k-Anonimlik modeli kullanıyoruz — SHA-1 hash'in yalnızca ilk 5 karakteri HIBP API'ye gönderilir.">Your password is never sent to any server. We use the k-Anonymity model — only the first 5 characters of the SHA-1 hash are sent to HIBP API.</span>
+          </div>
+          <div class="input-group">
+            <label class="input-label" data-en="PASSWORD TO CHECK" data-tr="KONTROL EDİLECEK ŞİFRE">PASSWORD TO CHECK</label>
+            <div class="input-wrapper">
+              <input type="password" class="input" id="breach-input" placeholder="Enter password to check..." style="padding-right:50px;"/>
+              <button onclick="toggleBreachVisibility()" id="breach-eye" class="pw-toggle">
+                <svg><path d="M1 9s4-5 11-5 11 5 11 5-4 5-11 5S1 9 1 9z"/><circle cx="12" cy="9" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="checkBreach(document.getElementById('breach-input').value)" id="breach-btn">
+            <span data-en="Check HIBP Database" data-tr="HIBP Veritabanını Kontrol Et">Check HIBP Database</span>
+          </button>
+          -->
+          <div id="pw-breach-result" style="margin-top:16px;"></div>
+        </div>
+      </div>
+      <!-- /password-tool -->
+
+      <!-- ══ TEMP EMAIL ══ -->
+      
+      <div class="tool-panel" id="email-tool">
+        <div class="panel-header">
+          <div class="panel-title">📧 <span data-en="Disposable Email" data-tr="Geçici E-posta">Disposable Email</span></div>
+          <div class="panel-desc" data-en="Generate a temporary, anonymous email address. Use it anywhere — no registration, no traces." data-tr="Geçici, anonim bir e-posta adresi üretin. Her yerde kullanın — kayıt yok, iz yok.">Generate a temporary, anonymous email address. Use it anywhere — no registration, no traces.</div>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="generateEmail(event)" data-en="Generate New Address" data-tr="Yeni Adres Üret">Generate New Address</button>
+          <button class="btn btn-secondary" onclick="refreshInbox()" data-en="↻ Refresh Inbox" data-tr="↻ Gelen Kutusunu Yenile">↻ Refresh Inbox</button>
+        </div>
+        <div class="email-display" id="email-display" style="display:none;">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:4px;" data-en="YOUR ANONYMOUS ADDRESS" data-tr="ANONİM ADRESİNİZ">YOUR ANONYMOUS ADDRESS</div>
+            <div class="email-addr" id="email-value">—</div>
+          </div>
+          <button class="copy-btn" onclick="copyResult('email-value')" data-en="Copy" data-tr="Kopyala">Copy</button>
+        </div>
+        <div class="inbox-list" id="inbox-list" style="margin-top:20px;display:none;">
+          <div style="font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:12px;" data-en="INBOX" data-tr="GELEN KUTUSU">INBOX</div>
+          <div class="inbox-empty" id="inbox-empty" data-en="No messages yet. Your inbox is clean." data-tr="Henüz mesaj yok. Gelen kutunuz temiz.">No messages yet. Your inbox is clean.</div>
+        </div>
+      </div>
+      <!-- /email-tool -->
+       <!-- ══ IMAGE METADATA CLEANER ══ -->
+<div class="tool-panel" id="metadata-tool">
+  <div class="panel-header">
+    <div class="panel-title">📸 <span data-en="Image Metadata Cleaner" data-tr="Görsel Metadata Temizleyici">Image Metadata Cleaner</span></div>
+    <div class="panel-desc" data-en="Remove hidden data from your photos: GPS location, camera model, date/time, and more. Protect your privacy before sharing images online." data-tr="Fotoğraflarınızdaki gizli verileri kaldırın: GPS konumu, kamera modeli, tarih/saat ve daha fazlası.">Remove hidden data from your photos: GPS location, camera model, date/time, and more. Protect your privacy before sharing images online.</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setMetadataTab('analyze')" id="tab-analyze-meta" data-en="Analyze" data-tr="Analiz Et">Analyze</button>
+    <button class="tab" onclick="setMetadataTab('clean')" id="tab-clean-meta" data-en="Clean & Download" data-tr="Temizle & İndir">Clean & Download</button>
+  </div>
+
+  <!-- ANALYZE TAB -->
+  <div id="metadata-analyze">
+    <div class="input-group">
+      <label class="input-label" data-en="UPLOAD IMAGE" data-tr="GÖRSEL YÜKLE">UPLOAD IMAGE</label>
+      <div class="file-input-wrapper">
+  <input type="file" id="metadata-analyze-input" accept="image/*">
+  <label for="metadata-analyze-input" class="file-input-label">
+    <span class="file-input-icon">📁</span>
+    <span>Choose Image or Drag & Drop</span>
+  </label>
+</div>
+      <div style="font-size: 11px; color: var(--text3); margin-top: 6px;" data-en="Supports: JPG, PNG, HEIC, WebP" data-tr="Desteklenen: JPG, PNG, HEIC, WebP">Supports: JPG, PNG, HEIC, WebP</div>
+    </div>
+
+    <button class="btn btn-primary" onclick="analyzeMetadata()">
+      <span data-en="🔍 Analyze Metadata" data-tr="🔍 Metadata'yı Analiz Et">🔍 Analyze Metadata</span>
+    </button>
+
+    <!-- RESULT BOX -->
+    <div class="result-box" id="metadata-analyze-result" style="margin-top: 20px;">
+      <!-- Results will appear here -->
+    </div>
+  </div>
+
+  <!-- CLEAN TAB -->
+  <!-- CLEAN TAB -->
+  <div id="metadata-clean" style="display:none;">
+    <div class="input-group">
+      <label class="input-label" data-en="UPLOAD IMAGE TO CLEAN" data-tr="TEMİZLENECEK GÖRSELI YÜKLE">UPLOAD IMAGE TO CLEAN</label>
+      <div class="file-input-wrapper">
+        <input type="file" id="metadata-clean-input" accept="image/*">
+        <label for="metadata-clean-input" class="file-input-label">
+          <span class="file-input-icon">📁</span>
+          <span>Choose Image or Drag & Drop</span>
+        </label>
+      </div>
+      <div style="font-size: 11px; color: var(--text3); margin-top: 6px;">Supports: JPG, PNG, HEIC, WebP</div>
+    </div>
+
+    <button class="btn btn-primary" onclick="cleanMetadata()">
+      <span data-en="🧹 Clean & Download" data-tr="🧹 Temizle & İndir">🧹 Clean & Download</span>
+    </button>
+
+    <div id="metadata-clean-result" style="margin-top: 20px; display:none;">
+      <!-- Cleaning status will appear here -->
+    </div>
+  </div>  
+</div>
+            <!-- ══ WEBRTC LEAK TEST ══ -->
+<div class="tool-panel" id="webrtc-tool">
+  <div class="panel-header">
+    <div class="panel-title">🌐 <span data-en="WebRTC Leak Test" data-tr="WebRTC Sızıntı Testi">WebRTC Leak Test</span></div>
+    <div class="panel-desc" data-en="Check if your VPN is leaking your real IP address through WebRTC. Even with VPN enabled, browsers can expose your local IP via WebRTC connections." data-tr="VPN'iniz WebRTC üzerinden gerçek IP adresinizi sızdırıyor mu kontrol edin.">Check if your VPN is leaking your real IP address through WebRTC. Even with VPN enabled, browsers can expose your local IP via WebRTC connections.</div>
+  </div>
+
+  <div style="background: rgba(0, 255, 170, 0.04); border: 1px solid rgba(0, 255, 170, 0.15); border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+    <div style="font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 6px;">ℹ️ What is WebRTC Leak?</div>
+    <div style="font-size: 11px; color: var(--text2); line-height: 1.6;">
+      WebRTC (Web Real-Time Communication) is used by browsers for voice/video calls. However, it can expose your real local IP address even when using a VPN, potentially revealing your true location.
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="runWebRTCTest()">
+    <span data-en="🔍 Test for WebRTC Leaks" data-tr="🔍 WebRTC Sızıntısını Test Et">🔍 Test for WebRTC Leaks</span>
+  </button>
+
+  <div class="result-box" id="webrtc-result" style="margin-top: 24px;">
+    <!-- Results will appear here -->
+  </div>
+</div>
+
+      <!-- ══ EMAIL BREACH CHECKER ══ -->
+     
+      <div class="tool-panel" id="breach-tool">
+        <div class="panel-header">
+          <div class="panel-title">🔴 <span data-en="Email Breach Checker" data-tr="E-posta İhlal Denetleyicisi">Email Breach Checker</span></div>
+          <div class="panel-desc" data-en="Check if your email has been compromised in data breaches using HaveIBeenPwned database." data-tr="E-postanızın HaveIBeenPwned veritabanındaki veri ihlallerinde ele geçirilip geçirilmediğini kontrol edin.">Check if your email has been compromised in data breaches using HaveIBeenPwned database.</div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" data-en="YOUR EMAIL" data-tr="E-POSTA ADRESİNİZ">YOUR EMAIL</label>
+         
+          <input type="email" class="input" id="breach-email-input" placeholder="your.email@example.com">
+        </div>
+
+        <button class="btn btn-primary" onclick="checkEmailBreach()">
+          <span data-en="CHECK BREACHES" data-tr="SIZDIRMALARI KONTROL ET">CHECK BREACHES</span>
+        </button>
+
+        <div id="breach-email-result" class="result-box" style="display:none; margin-top: 20px;"></div>
+      </div>
+      <!-- /breach-tool -->
+
+      
+      <div class="tool-panel" id="fingerprint-tool">
+  <div class="panel-header">
+    <div class="panel-title">🔍 <span data-en="Browser Fingerprint Analyzer" data-tr="Tarayıcı Parmak İzi Analizi">Browser Fingerprint Analyzer</span></div>
+    <div class="panel-desc" data-en="Discover how unique and trackable your browser is across the web." data-tr="Tarayıcınızın web üzerinde ne kadar benzersiz ve izlenebilir olduğunu keşfedin.">
+      Discover how unique and trackable your browser is across the web.
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background: rgba(0, 255, 170, 0.04); border: 1px solid rgba(0, 255, 170, 0.15); border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+    <div style="font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 6px;">
+      ℹ️ <span data-en="What is Browser Fingerprinting?" data-tr="Tarayıcı Parmak İzi Nedir?">What is Browser Fingerprinting?</span>
+    </div>
+    <div style="font-size: 11px; color: var(--text2); line-height: 1.6;">
+      <span data-en="Websites can track you without cookies by collecting unique information about your browser, device, and settings. This creates a 'fingerprint' that can identify you across the web." data-tr="Web siteleri çerezler olmadan tarayıcınız, cihazınız ve ayarlarınız hakkında benzersiz bilgiler toplayarak sizi takip edebilir.">
+        Websites can track you without cookies by collecting unique information about your browser, device, and settings. This creates a 'fingerprint' that can identify you across the web.
+      </span>
+    </div>
+  </div>
+
+  <!-- ANALYZE BUTTON -->
+  <button class="btn btn-primary" onclick="analyzeFingerprint()" id="fingerprint-btn">
+    <span data-en="🔍 Analyze My Browser" data-tr="🔍 Tarayıcımı Analiz Et">🔍 Analyze My Browser</span>
+  </button>
+
+  <!-- RESULT BOX -->
+  <div class="result-box" id="fingerprint-result" style="margin-top: 24px;">
+    <!-- Results will appear here -->
+  </div>
+  
+  <div id="fingerprint-output"></div>
+</div>
+
+  <!-- Fingerprint içeriği (YENİ) -->
+</div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<script src="js/fingerprint_collector.js"></script>
+<script src="js/app.js"></script>
+<script src="js/v.js"></script>
+<script src="js/wire.js"></script>
+
+</body>
+</html>

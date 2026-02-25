@@ -1,0 +1,52 @@
+# ─── Python ──────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ─── Virtual Environments ────────────────────────────────────────
+venv/
+env/
+.env
+.venv
+ENV/
+
+# ─── Secrets & API Keys ──────────────────────────────────────────
+.env
+*.env
+secrets.py
+config.local.py
+
+# ─── Runtime / Database ──────────────────────────────────────────
+backend/ratelimit.db
+*.db
+*.sqlite
+*.sqlite3
+
+# ─── ML Model Files (too large for GitHub) ───────────────────────
+sentinel_ai/phishing_model_ultimate.pkl
+sentinel_ai/tfidf_vectorizer.pkl
+postwatch_ai/email_phishing_model/
+
+# ─── OS Files ────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ─── IDE / Editor ────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── Logs ────────────────────────────────────────────────────────
+*.log
+logs/
