@@ -1,0 +1,13 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install --no-cache-dir flask==3.0.0 flask-cors==4.0.0 requests==2.31.0
+
+RUN mkdir -p /app/data
+
+EXPOSE 5002
+
+CMD ["python", "temp_email.py"]

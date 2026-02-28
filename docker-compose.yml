@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+
+  sentinel_ai:
+    build:
+      context: ./sentinel_ai
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  anonymizer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.anonymizer
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
+
+  temp_email:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.temp_email
+    ports:
+      - "5002:5002"
+    volumes:
+      - ratelimit_data:/app/data
+    restart: unless-stopped
+
+  breach_checker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.breach_checker
+    ports:
+      - "5003:5003"
+    environment:
+      - RAPIDAPI_KEY=${RAPIDAPI_KEY}
+    restart: unless-stopped
+
+  fingerprint_analyzer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.fingerprint_analyzer
+    ports:
+      - "5004:5004"
+    restart: unless-stopped
+
+  metadata_cleaner:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.metadata_cleaner
+    ports:
+      - "5005:5005"
+    restart: unless-stopped
+
+  postwatch_ai:
+    build:
+      context: ./postwatch_ai
+      dockerfile: Dockerfile
+    ports:
+      - "5007:5007"
+    restart: unless-stopped
+
+volumes:
+  ratelimit_data:

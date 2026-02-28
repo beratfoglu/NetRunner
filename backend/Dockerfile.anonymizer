@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install --no-cache-dir flask==3.0.0 flask-cors==4.0.0 requests==2.31.0 spacy==3.7.2 && \
+    python -m spacy download en_core_web_md --direct
+
+EXPOSE 5001
+
+CMD ["python", "anonymizer.py"]
