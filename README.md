@@ -197,7 +197,6 @@ NetRunner/
 │   ├── fingerprint_analyzer.py # Entropy model       → port 5004
 │   ├── metadata_cleaner.py     # Pillow EXIF         → port 5005
 │   ├── entropy_model.py        # Entropy calculations (imported by fingerprint_analyzer)
-│   ├── fingerprint_distributions.json
 │   ├── ratelimit.db            # SQLite rate limit store (auto-created)
 │   └── requirements.txt
 │
