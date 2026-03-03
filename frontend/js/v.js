@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 // ═══ GROQ API CONFIG ═══
-const GROQ_API_KEY = 'YOUR_GROQ_API_KEY';
+const GROQ_API_KEY = 'YOUR_GROQ_API_KEY_IS_HERE';
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.3-70b-versatile'; // The best groq
 
@@ -80,6 +80,7 @@ document.body.insertAdjacentHTML('beforeend', `
       <button class="vq" onclick="vQuick('url')">🔗 URL Check</button>
       <button class="vq" onclick="vQuick('breach')">🔴 Breach</button>
       <button class="vq" onclick="vQuick('metadata')">📸 Metadata</button>
+      <button class="vq" onclick="vQuick('tracker')">🍪 Tracker</button>
     </div>
     <div id="v-bar">
       <span id="v-pr">▸</span>
@@ -225,6 +226,7 @@ function vQuick(a) {
     phishing:  'Paste the email content to scan.',
     url:       'Drop the URL.',
     breach:    'Give me the email address.',
+    tracker:   'Drop the URL to scan for trackers.',
   };
   vWait = a;
   vMsg('v', prompts[a]);
@@ -247,6 +249,11 @@ async function vSend() {
     text.length > 30 ? await vDo('anonymize', text) : (vWait = 'anonymize', vMsg('v', 'Paste the text to anonymize.'));
     return;
   }
+  if (/(tracker|cookie|takipçi|çerez|tracking|spy|hangi.*takip|takip.*var)/.test(t)) {
+    const url = text.match(/https?:\/\/[^\s]+/)?.[0];
+    url ? await vDo('tracker', url) : (vWait = 'tracker', vMsg('v', 'Drop the URL to scan for trackers.'));
+    return;
+  }
   if (/(https?:\/\/|check.*url|url.*check|sentinel)/.test(t)) {
     const url = text.match(/https?:\/\/[^\s]+/)?.[0];
     url ? await vDo('url', url) : (vWait = 'url', vMsg('v', 'Drop the URL.'));
@@ -261,7 +268,7 @@ async function vSend() {
     em ? await vDo('breach', em) : (vWait = 'breach', vMsg('v', 'Give me the email address.'));
     return;
   }
-  if (/(open|aç|show|metadata|fingerprint|webrtc|temp.*mail|geçici|password|şifre)/.test(t)) {
+  if (/(open|aç|show|metadata|fingerprint|webrtc|temp.*mail|geçici|password|şifre|tracker|takipçi)/.test(t)) {
     vOpenTool(t);
     return;
   }
@@ -272,13 +279,14 @@ async function vSend() {
 // ── TOOL OPENER ──────────────────────────────────────────────────
 function vOpenTool(t) {
   const map = [
-    [/(metadata|exif|photo|fotoğraf)/, 'metadata',    'Metadata Cleaner'],
-    [/(fingerprint|parmak)/,           'fingerprint',  'Fingerprint Analyzer'],
-    [/(webrtc|vpn.*leak)/,             'webrtc',       'WebRTC Leak Test'],
-    [/(temp.*mail|geçici|disposable)/, 'email',        'Temp Email'],
-    [/(password|şifre)/,               'password',     'Password Manager'],
-    [/(anonymi|anonimle)/,             'anonymizer',   'Text Anonymizer'],
-    [/(phishing|sentinel)/,            'phishing',     'Phishing Detector'],
+    [/(tracker|cookie|takipçi|çerez)/,  'tracker',     'Tracker Analyzer'],
+    [/(metadata|exif|photo|fotoğraf)/,  'metadata',    'Metadata Cleaner'],
+    [/(fingerprint|parmak)/,            'fingerprint', 'Fingerprint Analyzer'],
+    [/(webrtc|vpn.*leak)/,              'webrtc',      'WebRTC Leak Test'],
+    [/(temp.*mail|geçici|disposable)/,  'email',       'Temp Email'],
+    [/(password|şifre)/,                'password',    'Password Manager'],
+    [/(anonymi|anonimle)/,              'anonymizer',  'Text Anonymizer'],
+    [/(phishing|sentinel)/,             'phishing',    'Phishing Detector'],
   ];
   for (const [re, tool, name] of map) {
     if (re.test(t)) {
@@ -287,14 +295,14 @@ function vOpenTool(t) {
       return;
     }
   }
-  vMsg('v', 'Available: Anonymizer, Phishing, Password, Temp Email, Metadata, WebRTC, Fingerprint. Which one?');
+  vMsg('v', 'Available: Anonymizer, Phishing, Password, Temp Email, Metadata, WebRTC, Fingerprint, Tracker. Which one?');
 }
 
 // ── BACKEND DISPATCHER ───────────────────────────────────────────
 async function vDo(action, data) {
   vTypOn();
   try {
-    await ({ anonymize: vAnon, phishing: vPost, url: vSent, breach: vBre }[action]?.(data));
+    await ({ anonymize: vAnon, phishing: vPost, url: vSent, breach: vBre, tracker: vTracker }[action]?.(data));
   } catch (e) {
     vTypOff();
     vMsg('v', '⚠️ Backend unreachable. Is the service running?');
@@ -374,6 +382,28 @@ async function vBre(email) {
   } catch { vTypOff(); vMsg('v', '⚠️ Breach checker offline — run `backend/breach_checker.py`'); }
 }
 
+async function vTracker(url) {
+  try {
+    const r = await fetch('http://127.0.0.1:5008/analyze', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const d = await r.json();
+    vTypOff();
+    const rc = d.risk_score >= 70 ? 'rh' : d.risk_score >= 40 ? 'rm' : 'rl';
+    vMsg('v', d.tracker_count > 0
+      ? `**${d.tracker_count} tracker${d.tracker_count > 1 ? 's' : ''}** found on ${d.domain}. Risk: **${d.risk_label}**.`
+      : `**${d.domain}** looks clean. No known trackers detected.`);
+    vCard(`<strong>${d.risk_label === 'CLEAN' ? '✅ CLEAN' : d.risk_score >= 70 ? '🚨 ' + d.risk_label : '⚠️ ' + d.risk_label}</strong><br><br>
+      Risk Score: <span class="${rc}">${d.risk_score}%</span> &nbsp;|&nbsp; Trackers: <span class="${rc}">${d.tracker_count}</span><br>
+      Scripts scanned: ${d.scripts_scanned}<br><br>
+      ${Object.entries(d.trackers_by_category || {}).map(([cat, arr]) =>
+        `<span style="opacity:.6">${cat}:</span> ${arr.map(t => `<strong>${t.name}</strong>`).join(', ')}`
+      ).join('<br>') || ''}
+      <br><br><span style="opacity:.4;font-size:10px;">🍪 Tracker Analyzer — ${d.analysis_engine || 'static'}</span>`);
+  } catch { vTypOff(); vMsg('v', '⚠️ Tracker Analyzer offline — run `backend/tracker_analyzer.py`'); }
+}
+
 // ═══ GROQ API (OpenAI-compatible format) ═══
 async function vGroq(text) {
   if (!GROQ_API_KEY || GROQ_API_KEY === 'YOUR_GROQ_API_KEY') {
@@ -383,7 +413,6 @@ async function vGroq(text) {
 
   vTypOn();
   
-  // ═══ SYSTEM MESSAGE (only once, at start) ═══
   if (vHist.length === 0) {
     vHist.push({
       role: 'system',
@@ -400,6 +429,7 @@ NetRunner tools available:
 - Metadata Cleaner: Removes EXIF/GPS from images
 - WebRTC Leak Test: Detects IP leaks while using VPN
 - Fingerprint Analyzer: Browser fingerprinting analysis
+- Cookie & Tracker Analyzer: Scans any URL for hidden trackers, ad networks, fingerprinting scripts, and data brokers
 
 CRITICAL LANGUAGE RULE:
 - If user writes in Turkish → respond ENTIRELY in Turkish
@@ -412,7 +442,6 @@ NEVER mention port numbers (5000, 5001, etc.) to users - these are internal tech
     });
   }
 
-  // ═══ DETECT USER LANGUAGE ═══
   const isTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(text) || 
                     /(merhaba|selam|nasıl|nedir|ne|yap|aç|kontrol|analiz|göster)/i.test(text);
   
@@ -420,7 +449,6 @@ NEVER mention port numbers (5000, 5001, etc.) to users - these are internal tech
     ? ' [RESPOND IN TURKISH ONLY]' 
     : ' [RESPOND IN ENGLISH ONLY]';
 
-  // ═══ ADD USER MESSAGE ═══
   vHist.push({ role: 'user', content: text + langHint });
 
   try {
@@ -428,7 +456,7 @@ NEVER mention port numbers (5000, 5001, etc.) to users - these are internal tech
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`  // ← Groq requires Authorization header!
+        'Authorization': `Bearer ${GROQ_API_KEY}`
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
@@ -443,7 +471,6 @@ NEVER mention port numbers (5000, 5001, etc.) to users - these are internal tech
     const d = await r.json();
     vTypOff();
 
-    // ═══ ERROR HANDLING ═══
     if (d.error) {
       const msg = d.error.message || d.error.type || '';
       if (msg.includes('rate_limit') || msg.includes('quota')) {
@@ -453,22 +480,18 @@ NEVER mention port numbers (5000, 5001, etc.) to users - these are internal tech
       } else {
         vMsg('v', `API error: ${msg}`);
       }
-      vHist.pop(); // Remove failed user message
+      vHist.pop();
       return;
     }
 
-    // ═══ EXTRACT RESPONSE ═══
     const rep = d.choices?.[0]?.message?.content || 'Signal lost. Try again.';
-    
-    // ═══ ADD ASSISTANT MESSAGE TO HISTORY ═══
     vHist.push({ role: 'assistant', content: rep });
-    
     vMsg('v', rep);
 
   } catch (e) {
     vTypOff();
     vMsg('v', `Connection error: ${e.message}`);
-    vHist.pop(); // Remove failed user message
+    vHist.pop();
   }
 }
 

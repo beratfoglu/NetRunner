@@ -134,7 +134,8 @@ function openTool(toolName) {
     'breach': 'breach-tool',
     'fingerprint': 'fingerprint-tool',
     'metadata': 'metadata-tool',
-    'webrtc': 'webrtc-tool'  
+    'webrtc': 'webrtc-tool'  ,
+    'tracker': 'tracker-tool',
   };
   
   const panelId = toolMap[toolName];
@@ -1659,3 +1660,227 @@ document.querySelectorAll('input[type="file"]').forEach(input => {
     }
   });
 });
+// ══════════════════════════════════════════════════════════════════════════
+// 1. openTool() FONKSİYONUNDAKİ toolMap'E EKLE:
+//    'tracker': 'tracker-tool',
+// ══════════════════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════════════════
+// COOKIE & TRACKER ANALYZER
+// ══════════════════════════════════════════════════════════════════════════
+
+const RISK_COLORS = {
+  CRITICAL: 'var(--red)',
+  HIGH:     'var(--red)',
+  MEDIUM:   'var(--yellow)',
+  LOW:      'var(--accent)',
+  CLEAN:    'var(--green)'
+};
+
+const RISK_ICONS = {
+  CRITICAL: '🚨',
+  HIGH:     '🔴',
+  MEDIUM:   '⚠️',
+  LOW:      '🔵',
+  CLEAN:    '✅'
+};
+
+const CATEGORY_ICONS = {
+  advertising:    '🎯',
+  analytics:      '📊',
+  fingerprinting: '🔬',
+  data_broker:    '💀',
+  infrastructure: '⚙️'
+};
+
+async function runTrackerAnalysis() {
+  const input = document.getElementById('tracker-input').value.trim();
+  if (!input) return;
+
+  const btn = document.getElementById('tracker-btn');
+  btn.innerHTML = `<span class="spinner spinner-light"></span> ${currentLang === 'tr' ? 'Taranıyor...' : 'Scanning...'}`;
+  btn.disabled = true;
+
+  const resultBox = document.getElementById('tracker-result');
+  resultBox.classList.add('show');
+
+  // Loading state
+  document.getElementById('tracker-risk-header').innerHTML = `
+    <div style="text-align:center;padding:30px;color:var(--text2);font-size:13px;">
+      🔍 ${currentLang === 'tr' ? 'Sayfa analiz ediliyor, lütfen bekleyin...' : 'Analyzing page, please wait...'}
+    </div>`;
+  document.getElementById('tracker-stats').innerHTML = '';
+  document.getElementById('tracker-categories').innerHTML = '';
+  document.getElementById('tracker-cookies').innerHTML = '';
+  document.getElementById('tracker-tips').innerHTML = '';
+  document.getElementById('tracker-bar').style.width = '0%';
+  document.getElementById('tracker-score-val').textContent = '0%';
+
+  try {
+    const res = await fetch('http://127.0.0.1:5008/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: input })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Analysis failed');
+    }
+
+    const data = await res.json();
+    _renderTrackerResults(data);
+
+  } catch (err) {
+    document.getElementById('tracker-risk-header').innerHTML = `
+      <div style="background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.3);border-radius:8px;padding:16px;">
+        <div style="color:var(--red);font-weight:700;margin-bottom:6px;">❌ ${currentLang === 'tr' ? 'Analiz başarısız' : 'Analysis failed'}</div>
+        <div style="font-size:12px;color:var(--text2);">${err.message}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;">${currentLang === 'tr' ? 'Backend çalışıyor mu? python tracker_analyzer.py' : 'Is backend running? python tracker_analyzer.py'}</div>
+      </div>`;
+  }
+
+  btn.innerHTML = `<span>${currentLang === 'tr' ? '🔍 Takipçileri Tara' : '🔍 Scan for Trackers'}</span>`;
+  btn.disabled = false;
+}
+
+function _renderTrackerResults(data) {
+  const score = data.risk_score;
+  const label = data.risk_label;
+  const color = RISK_COLORS[label] || 'var(--green)';
+  const icon  = RISK_ICONS[label] || '✅';
+
+  // ── RISK HEADER ──
+  document.getElementById('tracker-risk-header').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">${currentLang === 'tr' ? 'ANALİZ EDİLEN DOMAIN' : 'ANALYZED DOMAIN'}</div>
+        <div style="font-size:16px;font-weight:700;color:var(--accent);font-family:var(--font-mono);">${data.domain}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">${currentLang === 'tr' ? 'RİSK SEVİYESİ' : 'RISK LEVEL'}</div>
+        <div style="font-size:20px;font-weight:800;color:${color};">${icon} ${label}</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:12px;color:var(--text2);">
+      ${data.summary}
+    </div>`;
+
+  // ── SCORE BAR ──
+  document.getElementById('tracker-bar').style.cssText = `width:${score}%;background:${color};`;
+  document.getElementById('tracker-score-val').style.color = color;
+  document.getElementById('tracker-score-val').textContent = score + '%';
+
+  // ── STATS ──
+  document.getElementById('tracker-stats').innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:${color};">${data.tracker_count}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'TAKİPÇİ BULUNDU' : 'TRACKERS FOUND'}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:var(--accent);">${data.scripts_scanned}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'SCRIPT TARANDΙ' : 'SCRIPTS SCANNED'}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:${score >= 40 ? 'var(--red)' : 'var(--green)'};">${score}%</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'RİSK SKORU' : 'RISK SCORE'}</div>
+    </div>`;
+
+  // ── TRACKERS BY CATEGORY ──
+  const catContainer = document.getElementById('tracker-categories');
+  if (data.tracker_count === 0) {
+    catContainer.innerHTML = `
+      <div style="text-align:center;padding:30px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:8px;">
+        <div style="font-size:40px;margin-bottom:12px;">✅</div>
+        <div style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:6px;">${currentLang === 'tr' ? 'Takipçi Bulunamadı' : 'No Trackers Found'}</div>
+        <div style="font-size:12px;color:var(--text2);">${currentLang === 'tr' ? 'Bu sayfa temiz görünüyor.' : 'This page appears to be clean.'}</div>
+      </div>`;
+  } else {
+    let html = `<div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:12px;">${currentLang === 'tr' ? 'TESPİT EDİLEN TAKİPÇİLER' : 'DETECTED TRACKERS'}</div>`;
+
+    const categoryLabels = data.category_labels || {};
+
+    for (const [cat, trackers] of Object.entries(data.trackers_by_category)) {
+      const catLabel = categoryLabels[cat] || cat;
+      const catIcon  = CATEGORY_ICONS[cat] || '📌';
+      const catColor = cat === 'data_broker' ? 'var(--red)' :
+                       cat === 'fingerprinting' ? 'var(--red)' :
+                       cat === 'advertising' ? 'var(--yellow)' :
+                       cat === 'analytics' ? 'var(--accent)' : 'var(--text2)';
+
+      html += `
+        <div style="margin-bottom:16px;">
+          <div style="font-size:12px;font-weight:700;color:${catColor};margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            ${catIcon} ${catLabel} <span style="font-size:10px;opacity:0.7;">(${trackers.length})</span>
+          </div>
+          <div style="display:grid;gap:8px;">`;
+
+      trackers.forEach(t => {
+        const riskColor = t.risk === 'critical' ? 'var(--red)' :
+                          t.risk === 'high' ? 'var(--red)' :
+                          t.risk === 'medium' ? 'var(--yellow)' : 'var(--text3)';
+
+        html += `
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;transition:border-color 0.2s;" 
+               onmouseenter="this.style.borderColor='${riskColor}33'" 
+               onmouseleave="this.style.borderColor='var(--border)'">
+            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:6px;">
+              <div style="font-size:13px;font-weight:700;color:var(--text);">${t.name}</div>
+              <span style="font-size:10px;font-weight:700;color:${riskColor};background:${riskColor}18;padding:2px 8px;border-radius:4px;border:1px solid ${riskColor}33;">
+                ${t.risk.toUpperCase()}
+              </span>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">${t.company}</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.5;">${t.description}</div>
+          </div>`;
+      });
+
+      html += `</div></div>`;
+    }
+
+    catContainer.innerHTML = html;
+  }
+
+  // ── COOKIES ──
+  if (data.cookies && data.cookies.length > 0) {
+    let cookieHtml = `
+      <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:12px;">${currentLang === 'tr' ? 'ÇEREZ BİLGİSİ' : 'COOKIE INFO'}</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;">`;
+
+    data.cookies.forEach(c => {
+      cookieHtml += `
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-size:10px;padding:3px 8px;border-radius:4px;background:${c.secure ? 'rgba(0,255,136,0.1)' : 'rgba(255,68,102,0.1)'};color:${c.secure ? 'var(--green)' : 'var(--red)'};">
+            ${c.secure ? '🔒 Secure' : '⚠️ Not Secure'}
+          </span>
+          <span style="font-size:10px;padding:3px 8px;border-radius:4px;background:${c.httponly ? 'rgba(0,255,136,0.1)' : 'rgba(255,208,10,0.1)'};color:${c.httponly ? 'var(--green)' : 'var(--yellow)'};">
+            ${c.httponly ? '✅ HttpOnly' : '⚠️ JS Accessible'}
+          </span>
+          <span style="font-size:10px;padding:3px 8px;border-radius:4px;background:${c.samesite ? 'rgba(0,255,136,0.1)' : 'rgba(255,68,102,0.1)'};color:${c.samesite ? 'var(--green)' : 'var(--red)'};">
+            ${c.samesite ? '✅ SameSite' : '⚠️ No SameSite'}
+          </span>
+        </div>`;
+    });
+
+    cookieHtml += `</div>`;
+    document.getElementById('tracker-cookies').innerHTML = cookieHtml;
+  }
+
+  // ── PROTECTION TIPS ──
+  document.getElementById('tracker-tips').innerHTML = `
+    <div style="background:rgba(0,255,170,0.04);border:1px solid rgba(0,255,170,0.15);border-radius:8px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px;">💡 ${currentLang === 'tr' ? 'Kendinizi Koruyun' : 'Protect Yourself'}</div>
+      <div style="display:grid;gap:6px;">
+        ${[
+          { icon: '🦁', text: currentLang === 'tr' ? 'Brave Browser — varsayılan olarak takipçileri engeller' : 'Brave Browser — blocks trackers by default' },
+          { icon: '🔌', text: currentLang === 'tr' ? 'uBlock Origin eklentisini yükleyin' : 'Install uBlock Origin extension' },
+          { icon: '🕵️', text: currentLang === 'tr' ? 'Privacy Badger ile takipçileri otomatik tespit edin' : 'Use Privacy Badger to auto-detect trackers' },
+          { icon: '🌐', text: currentLang === 'tr' ? 'VPN kullanarak IP adresinizi gizleyin' : 'Use a VPN to mask your IP address' },
+          { icon: '🍪', text: currentLang === 'tr' ? 'Tarayıcı çerezlerini düzenli olarak temizleyin' : 'Regularly clear browser cookies' },
+        ].map(t => `
+          <div style="font-size:11px;color:var(--text2);display:flex;gap:8px;align-items:start;">
+            <span>${t.icon}</span><span>${t.text}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}

@@ -2,7 +2,7 @@
 
 > *Leave no trace. Trust no node.*
 
-A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered text anonymization, AI-driven phishing detection, cryptographic password management, disposable email generation, browser fingerprint analysis, and more — all running locally with zero data stored server-side.
+A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered text anonymization, AI-driven phishing detection, cryptographic password management, disposable email generation, browser fingerprint analysis, cookie & tracker detection — all running locally with zero data stored server-side.
 
 ---
 
@@ -66,6 +66,11 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ---
 
+### 🍪 Cookie & Tracker Analyzer
+![Tracker Analyzer](ScreenShots/tracker_analyzer.png)
+
+---
+
 ### 🤖 V — AI Handler
 ![V AI Handler](ScreenShots/V.png)
 
@@ -78,7 +83,7 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ## Features
 
-NetRunner bundles **8 privacy tools** into a single, locally-hosted web application.
+NetRunner bundles **9 privacy tools** into a single, locally-hosted web application.
 
 ### 🔏 Text Anonymizer
 Detects and masks Personally Identifiable Information (PII) in any text using a **hybrid NLP engine** — a spaCy transformer model (`en_core_web_md`) combined with high-priority regex patterns.
@@ -145,16 +150,29 @@ Analyzed components: screen resolution, timezone, platform, language, hardware c
 - **Anti-fingerprint paradox detection**: identifies when randomization tools are making a browser *more* unique
 - Returns uniqueness score (0–100), risk level, per-component rarity, and privacy recommendations
 
+### 🍪 Cookie & Tracker Analyzer
+Scans any URL for hidden trackers, ad networks, session recorders, and data brokers embedded on the page.
+
+- **32+ known trackers** in database: Meta Pixel, Google Ads, TikTok Pixel, Oracle BlueKai, Quantcast, Hotjar, FullStory, LogRocket, Yandex Metrica, Criteo, Taboola, Outbrain, and more
+- **4 risk categories**: Advertising, Analytics, Fingerprinting/Session Recording, Data Broker
+- **Weighted risk scoring**: Critical (+40), High (+20), Medium (+10), Low (+3) → capped at 100%
+- **Headless browser mode**: uses Playwright + Chromium to fully render pages and capture dynamically loaded scripts — detects trackers invisible to static HTML scanners
+- **Stealth mode**: bypasses bot detection using `playwright-stealth`; falls back to manual stealth script if library unavailable
+- **Static fallback**: uses `requests` + BeautifulSoup if Playwright is not installed
+- Cookie security flag analysis: Secure, HttpOnly, SameSite
+- Per-tracker details: company name, description, risk level, matched domain/script
+
 ---
 
 ## V — AI Handler
 
 **V** is a built-in cyberpunk AI assistant powered by the **Groq API** (LLaMA 3.3 70B).
 
-- Dispatches tasks directly to NetRunner backends (anonymizer, phishing, breach checker)
+- Dispatches tasks directly to NetRunner backends: anonymizer, phishing, breach checker, **tracker analyzer**
+- Quick-action buttons: Anonymize, Email Scan, URL Check, Breach, Metadata, **Tracker**
+- Natural language routing: detects intent from keywords in both Turkish and English
 - Detects user language (English/Turkish) and responds accordingly
 - Full conversation history maintained in-session
-- Quick-action buttons for common tasks
 - Pixel art avatar rendered on HTML5 Canvas
 - Falls back gracefully if Groq API key is not configured
 
@@ -191,14 +209,16 @@ NetRunner/
 │       └── wire.js             # Live news feed (self-contained IIFE)
 │
 ├── backend/
-│   ├── anonymizer.py           # spaCy NER + Regex  → port 5001
-│   ├── temp_email.py           # Mail.tm + SQLite    → port 5002
-│   ├── breach_checker.py       # BreachDirectory API → port 5003
-│   ├── fingerprint_analyzer.py # Entropy model       → port 5004
-│   ├── metadata_cleaner.py     # Pillow EXIF         → port 5005
+│   ├── anonymizer.py           # spaCy NER + Regex       → port 5001
+│   ├── temp_email.py           # Mail.tm + SQLite        → port 5002
+│   ├── breach_checker.py       # BreachDirectory API     → port 5003
+│   ├── fingerprint_analyzer.py # Entropy model           → port 5004
+│   ├── metadata_cleaner.py     # Pillow EXIF             → port 5005
+│   ├── tracker_analyzer.py     # Playwright + BS4        → port 5008
 │   ├── entropy_model.py        # Entropy calculations (imported by fingerprint_analyzer)
 │   ├── ratelimit.db            # SQLite rate limit store (auto-created)
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── requirements.tracker.txt
 │
 ├── sentinel_ai/
 │   ├── app.py                  # URL phishing ML API → port 5000
@@ -213,6 +233,14 @@ NetRunner/
 │       ├── tokenizer.json
 │       └── tokenizer_config.json
 │
+├── Dockerfile.anonymizer
+├── Dockerfile.breach_checker
+├── Dockerfile.fingerprint_analyzer
+├── Dockerfile.metadata_cleaner
+├── Dockerfile.temp_email
+├── Dockerfile.tracker_analyzer
+├── .env.example                # API key template
+├── docker-compose.yml          # Single-command startup for all services
 └── ScreenShots/
 ```
 
@@ -227,25 +255,86 @@ NetRunner/
 | 5004 | Browser Fingerprint Analyzer | Entropy model (Python) |
 | 5005 | Image Metadata Cleaner | Pillow |
 | 5007 | PostWatch AI — Email Phishing | DistilBERT (HuggingFace Transformers) |
+| 5008 | Cookie & Tracker Analyzer | Playwright + Chromium + BeautifulSoup4 |
 
 ---
 
 ## Installation & Setup
 
-### Prerequisites
+There are two ways to run NetRunner: **Docker** (recommended) or **manual**.
 
-- Python 3.9+
-- No Node.js required — frontend is plain HTML/CSS/JS
-- A modern browser (Chrome, Firefox, Brave, Edge)
+---
 
-### 1. Clone the repository
+### 🐳 Option A — Docker (Recommended)
+
+The easiest way to run all 8 backend services with a single command.
+
+#### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/beratfoglu/NetRunner.git
 cd NetRunner
 ```
 
-### 2. Install backend dependencies
+#### 2. Configure API keys
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in your keys:
+
+```
+RAPIDAPI_KEY=your_rapidapi_key_here
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+> - **RapidAPI key**: Sign up at [rapidapi.com](https://rapidapi.com) and subscribe to [BreachDirectory API](https://rapidapi.com/rohan-patra/api/breachdirectory) (free tier: 100 requests/day)
+> - **Groq API key**: Get a free key at [console.groq.com](https://console.groq.com), then paste it into `frontend/js/v.js` → `const GROQ_API_KEY = 'your_key'`
+
+#### 3. Start all services
+
+```bash
+docker-compose up --build
+```
+
+> First run takes a few minutes — Docker downloads Python images and installs all dependencies including PyTorch and Playwright/Chromium. Subsequent runs start in seconds using cached layers.
+
+#### 4. Open the frontend
+
+Open `frontend/index.html` in your browser. All 8 services are now running.
+
+#### Managing services
+
+```bash
+docker-compose up -d      # Run in background (detached mode)
+docker-compose down       # Stop all services
+docker-compose restart    # Restart all services
+```
+
+You can also manage containers visually via **Docker Desktop** → Containers → `netrunner`.
+
+---
+
+### 🔧 Option B — Manual Setup
+
+#### Prerequisites
+
+- Python 3.9+
+- No Node.js required — frontend is plain HTML/CSS/JS
+- A modern browser (Chrome, Firefox, Brave, Edge)
+
+#### 1. Clone the repository
+
+```bash
+git clone https://github.com/beratfoglu/NetRunner.git
+cd NetRunner
+```
+
+#### 2. Install backend dependencies
 
 ```bash
 cd backend
@@ -262,14 +351,23 @@ spacy==3.7.2
 Pillow==10.2.0
 ```
 
-### 3. Install Sentinel AI dependencies
+#### 3. Install Tracker Analyzer dependencies
+
+```bash
+pip install -r requirements.tracker.txt
+playwright install chromium
+```
+
+> Optional but recommended for better stealth: `pip install playwright-stealth`
+
+#### 4. Install Sentinel AI dependencies
 
 ```bash
 cd sentinel_ai
 pip install flask flask-cors scikit-learn pandas numpy scipy
 ```
 
-### 4. Install PostWatch AI dependencies
+#### 5. Install PostWatch AI dependencies
 
 ```bash
 cd postwatch_ai
@@ -278,7 +376,7 @@ pip install flask flask-cors torch transformers
 
 > **Note:** The `email_phishing_model/` directory must contain the fine-tuned DistilBERT model files: `config.json`, `model.safetensors`, `tokenizer.json`, `tokenizer_config.json`. These are not included in the repository due to file size.
 
-### 5. Configure API keys
+#### 6. Configure API keys
 
 **Breach Checker** — BreachDirectory (RapidAPI):
 1. Sign up at [rapidapi.com](https://rapidapi.com)
@@ -297,7 +395,7 @@ export RAPIDAPI_KEY=your_key_here     # macOS/Linux
 const GROQ_API_KEY = 'YOUR_GROQ_API_KEY';
 ```
 
-### 6. Start all backend services
+#### 7. Start all backend services
 
 Open a separate terminal for each service:
 
@@ -322,38 +420,16 @@ cd backend && python metadata_cleaner.py
 
 # Terminal 7 — PostWatch AI (email phishing)
 cd postwatch_ai && python app.py
+
+# Terminal 8 — Cookie & Tracker Analyzer
+cd backend && python tracker_analyzer.py
 ```
 
-### 7. Open the frontend
+#### 8. Open the frontend
 
 Open `frontend/index.html` directly in your browser — no web server required.
 
 > All tools degrade gracefully: if a backend service is offline, the tool either falls back to a client-side implementation (anonymizer, phishing pattern mode) or displays a clear offline message.
-
----
-
-## .gitignore
-
-The following files should be excluded from version control:
-
-```
-# Python
-__pycache__/
-*.pyc
-*.pyo
-
-# Database
-backend/ratelimit.db
-
-# ML model files (large binary files)
-sentinel_ai/phishing_model_ultimate.pkl
-sentinel_ai/tfidf_vectorizer.pkl
-postwatch_ai/email_phishing_model/
-
-# API keys (if stored in config files)
-*.env
-.env
-```
 
 ---
 
@@ -364,9 +440,12 @@ postwatch_ai/email_phishing_model/
 | Frontend | Vanilla HTML5, CSS3, JavaScript (ES2022) |
 | Fonts | JetBrains Mono, Orbitron (Google Fonts) |
 | Backend | Python 3, Flask, Flask-CORS |
+| Containerization | Docker, Docker Compose |
 | NLP | spaCy (`en_core_web_md`) |
 | ML — URL | scikit-learn, TF-IDF, Random Forest |
 | ML — Email | HuggingFace Transformers, DistilBERT, PyTorch |
+| Headless Browser | Playwright + Chromium + playwright-stealth |
+| Tracker Database | 32+ known trackers (4 risk categories) |
 | Database | SQLite (rate limiting) |
 | Image processing | Pillow |
 | Email API | Mail.tm |
@@ -383,6 +462,8 @@ postwatch_ai/email_phishing_model/
 - **k-Anonymity for password breach checks**: only the first 5 characters of a SHA-1 hash are sent to HIBP; the actual password never leaves the device
 - **Rate limiting**: temp email generation is limited to 2 addresses per IP per hour, enforced server-side with timestamp validation and manipulation detection
 - **Local-first**: all AI models run on your own machine; no data is sent to external AI services unless the Groq API key is configured for V
+- **API keys**: never hardcoded — loaded via `.env` file (excluded from version control)
+- **Tracker Analyzer**: URLs you scan are fetched server-side — the target site sees your server IP, not your browser
 
 ---
 
@@ -393,6 +474,7 @@ postwatch_ai/email_phishing_model/
 - PostWatch AI returns 503 errors until `email_phishing_model/` is populated with model files
 - On Windows, terminal output encoding is handled automatically via `sys.stdout` UTF-8 override in each backend file
 - WebRTC leak test results may vary depending on browser privacy settings and VPN configuration
+- First `docker-compose up --build` takes several minutes due to PyTorch + Playwright/Chromium downloads; subsequent runs use cached layers
 
 ---
 

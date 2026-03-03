@@ -107,7 +107,7 @@
   <div class="section">
     <div class="stats-row reveal">
       <div class="stat-item">
-        <span class="stat-num" data-target="8">0</span>
+        <span class="stat-num" data-target="9">0</span>
         <div class="stat-lbl" data-en="PRIVACY TOOLS" data-tr="GİZLİLİK ARACI">PRIVACY TOOLS</div>
       </div>
       <div class="stat-item">
@@ -124,7 +124,7 @@
   <!-- Tools Section -->
   <div class="section" style="padding-top:0;">
     <p class="section-label reveal-left" data-en="// TOOLS" data-tr="// ARAÇLAR">// TOOLS</p>
-    <h2 class="section-title reveal-left" data-en="Eight tools. One runner." data-tr="Sekiz araç. Tek runner.">Eight tools. One runner.</h2>
+    <h2 class="section-title reveal-left" data-en="Nine tools. One runner." data-tr="Dokuz araç. Tek runner.">Eight tools. One runner.</h2>
     <p class="section-desc reveal-left" data-en="Each module is independently powerful. Together, they form a complete privacy layer for your digital life." data-tr="Her modül kendi başına güçlüdür. Birlikte, dijital yaşamın için eksiksiz bir gizlilik katmanı oluştururlar.">
       Each module is independently powerful. Together, they form a complete privacy layer for your digital life.
     </p>
@@ -189,6 +189,14 @@
         <div class="tool-desc" data-en="Discover how unique and trackable your browser is. Canvas, WebGL, audio and font-based analysis." data-tr="Tarayıcınızın ne kadar benzersiz ve izlenebilir olduğunu keşfedin.">Discover how unique and trackable your browser is. Canvas, WebGL, audio and font-based analysis.</div>
         <span class="tag">Entropy Analysis</span>
       </div>
+      <div class="tool-card reveal" onclick="openTool('tracker')">
+  <div class="tool-icon">🍪</div>
+  <div class="tool-name" data-en="Tracker Analyzer" data-tr="Takipçi Analizi">Tracker Analyzer</div>
+  <div class="tool-desc" data-en="Expose hidden trackers, ad networks, and session recorders on any website. See who's watching you." data-tr="Herhangi bir web sitesindeki gizli takipçileri, reklam ağlarını ve oturum kaydedicileri ortaya çıkarın.">
+    Expose hidden trackers, ad networks, and session recorders on any website. See who's watching you.
+  </div>
+  <span class="tag">20+ Trackers DB</span>
+</div>
     </div>
   </div>
 
@@ -266,6 +274,10 @@
         <div class="sidebar-item" onclick="openTool('fingerprint')" id="sb-fingerprint">
   <span class="sidebar-icon">🔍</span>
   <span>Browser Fingerprint</span>
+</div>
+        <div class="sidebar-item" onclick="openTool('tracker')" id="sb-tracker">
+  <span class="sidebar-icon">🍪</span>
+  <span data-en="Tracker Analyzer" data-tr="Takipçi Analizi">Tracker Analyzer</span>
 </div>
 
       <div class="sidebar-section">
@@ -639,6 +651,7 @@
       Discover how unique and trackable your browser is across the web.
     </div>
   </div>
+  
 
   <!-- INFO BOX -->
   <div style="background: rgba(0, 255, 170, 0.04); border: 1px solid rgba(0, 255, 170, 0.15); border-radius: 8px; padding: 16px; margin-bottom: 24px;">
@@ -663,12 +676,50 @@
   </div>
   
   <div id="fingerprint-output"></div>
+<div id="fingerprint-output"></div>
 </div>
+<!-- /fingerprint-tool -->
 
+      <!-- ══ TRACKER ANALYZER ══ -->
+      <div class="tool-panel" id="tracker-tool">
+        <div class="panel-header">
+          <div class="panel-title">🍪 Cookie & Tracker Analyzer</div>
+          <div class="panel-desc">Enter any URL to reveal hidden trackers, ad networks, and data brokers embedded on the page.</div>
+        </div>
+        <div style="background:rgba(255,68,102,0.04);border:1px solid rgba(255,68,102,0.15);border-radius:8px;padding:16px;margin-bottom:24px;">
+          <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px;">⚠️ How You're Being Tracked</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.6;">Sites embed third-party scripts from Meta, Google, TikTok, and data brokers. These scripts follow you across the web — without your knowledge.</div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">TARGET URL</label>
+          <input type="text" class="input" id="tracker-input" placeholder="https://www.trendyol.com" onkeydown="if(event.key==='Enter') runTrackerAnalysis()"/>
+        </div>
+        <button class="btn btn-primary" onclick="runTrackerAnalysis()" id="tracker-btn">
+          <span>🔍 Scan for Trackers</span>
+        </button>
+        <div class="result-box" id="tracker-result" style="margin-top:24px;">
+          <div id="tracker-risk-header"></div>
+          <div class="score-row" style="margin-top:20px;">
+            <div class="score-label">Privacy Risk</div>
+            <div class="score-bar-wrap"><div class="progress-bar" id="tracker-bar"></div></div>
+            <div class="score-value" id="tracker-score-val">0%</div>
+          </div>
+          <div id="tracker-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;"></div>
+          <div id="tracker-categories" style="margin-top:24px;"></div>
+          <div id="tracker-cookies" style="margin-top:20px;"></div>
+          <div id="tracker-tips" style="margin-top:20px;"></div>
+        </div>
+      </div>
+      <!-- /tracker-tool -->
+
+    </main>
+  </div>
+</div>
   <!-- Fingerprint içeriği (YENİ) -->
 </div>
 
-    </main>
+   
+</main>
   </div>
 </div>
 

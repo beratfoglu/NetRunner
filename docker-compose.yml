@@ -62,5 +62,14 @@ services:
       - "5007:5007"
     restart: unless-stopped
 
+  tracker_analyzer:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.tracker_analyzer
+    ports:
+      - "5008:5008"
+    restart: unless-stopped
+    shm_size: '2gb'
+
 volumes:
   ratelimit_data:
