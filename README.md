@@ -267,7 +267,7 @@ There are two ways to run NetRunner: **Docker** (recommended) or **manual**.
 
 ### 🐳 Option A — Docker (Recommended)
 
-The easiest way to run all 8 backend services with a single command.
+The easiest way to run all 9 backend services with a single command.
 
 #### Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
