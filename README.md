@@ -233,12 +233,15 @@ NetRunner/
 │       ├── tokenizer.json
 │       └── tokenizer_config.json
 │
+<<<<<<< HEAD
 ├── Dockerfile.anonymizer
 ├── Dockerfile.breach_checker
 ├── Dockerfile.fingerprint_analyzer
 ├── Dockerfile.metadata_cleaner
 ├── Dockerfile.temp_email
 ├── Dockerfile.tracker_analyzer
+=======
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 ├── .env.example                # API key template
 ├── docker-compose.yml          # Single-command startup for all services
 └── ScreenShots/
@@ -267,7 +270,11 @@ There are two ways to run NetRunner: **Docker** (recommended) or **manual**.
 
 ### 🐳 Option A — Docker (Recommended)
 
+<<<<<<< HEAD
 The easiest way to run all 8 backend services with a single command.
+=======
+The easiest way to run all 7 backend services with a single command.
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 #### Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -301,11 +308,19 @@ GROQ_API_KEY=your_groq_api_key_here
 docker-compose up --build
 ```
 
+<<<<<<< HEAD
 > First run takes a few minutes — Docker downloads Python images and installs all dependencies including PyTorch and Playwright/Chromium. Subsequent runs start in seconds using cached layers.
 
 #### 4. Open the frontend
 
 Open `frontend/index.html` in your browser. All 8 services are now running.
+=======
+> First run takes a few minutes — Docker downloads Python images and installs all dependencies including PyTorch. Subsequent runs start in seconds using cached layers.
+
+#### 4. Open the frontend
+
+Open `frontend/index.html` in your browser. All 7 services are now running.
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 #### Managing services
 
@@ -351,6 +366,7 @@ spacy==3.7.2
 Pillow==10.2.0
 ```
 
+<<<<<<< HEAD
 #### 3. Install Tracker Analyzer dependencies
 
 ```bash
@@ -361,13 +377,20 @@ playwright install chromium
 > Optional but recommended for better stealth: `pip install playwright-stealth`
 
 #### 4. Install Sentinel AI dependencies
+=======
+#### 3. Install Sentinel AI dependencies
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 ```bash
 cd sentinel_ai
 pip install flask flask-cors scikit-learn pandas numpy scipy
 ```
 
+<<<<<<< HEAD
 #### 5. Install PostWatch AI dependencies
+=======
+#### 4. Install PostWatch AI dependencies
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 ```bash
 cd postwatch_ai
@@ -376,7 +399,11 @@ pip install flask flask-cors torch transformers
 
 > **Note:** The `email_phishing_model/` directory must contain the fine-tuned DistilBERT model files: `config.json`, `model.safetensors`, `tokenizer.json`, `tokenizer_config.json`. These are not included in the repository due to file size.
 
+<<<<<<< HEAD
 #### 6. Configure API keys
+=======
+#### 5. Configure API keys
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 **Breach Checker** — BreachDirectory (RapidAPI):
 1. Sign up at [rapidapi.com](https://rapidapi.com)
@@ -395,7 +422,11 @@ export RAPIDAPI_KEY=your_key_here     # macOS/Linux
 const GROQ_API_KEY = 'YOUR_GROQ_API_KEY';
 ```
 
+<<<<<<< HEAD
 #### 7. Start all backend services
+=======
+#### 6. Start all backend services
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 Open a separate terminal for each service:
 
@@ -425,7 +456,11 @@ cd postwatch_ai && python app.py
 cd backend && python tracker_analyzer.py
 ```
 
+<<<<<<< HEAD
 #### 8. Open the frontend
+=======
+#### 7. Open the frontend
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 Open `frontend/index.html` directly in your browser — no web server required.
 
@@ -463,7 +498,10 @@ Open `frontend/index.html` directly in your browser — no web server required.
 - **Rate limiting**: temp email generation is limited to 2 addresses per IP per hour, enforced server-side with timestamp validation and manipulation detection
 - **Local-first**: all AI models run on your own machine; no data is sent to external AI services unless the Groq API key is configured for V
 - **API keys**: never hardcoded — loaded via `.env` file (excluded from version control)
+<<<<<<< HEAD
 - **Tracker Analyzer**: URLs you scan are fetched server-side — the target site sees your server IP, not your browser
+=======
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 ---
 
@@ -474,7 +512,11 @@ Open `frontend/index.html` directly in your browser — no web server required.
 - PostWatch AI returns 503 errors until `email_phishing_model/` is populated with model files
 - On Windows, terminal output encoding is handled automatically via `sys.stdout` UTF-8 override in each backend file
 - WebRTC leak test results may vary depending on browser privacy settings and VPN configuration
+<<<<<<< HEAD
 - First `docker-compose up --build` takes several minutes due to PyTorch + Playwright/Chromium downloads; subsequent runs use cached layers
+=======
+- First `docker-compose up --build` takes several minutes due to PyTorch download (~1GB); subsequent runs use cached layers
+>>>>>>> 2d573d3ee6ec4f1e61c217ee5b8400f0b6a6188f
 
 ---
 
