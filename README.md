@@ -305,7 +305,7 @@ docker-compose up --build
 
 #### 4. Open the frontend
 
-Open `frontend/index.html` in your browser. All 8 services are now running.
+Open `frontend/index.html` in your browser. All 9 services are now running.
 
 #### Managing services
 
