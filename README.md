@@ -184,8 +184,8 @@ Scans 121 platforms to discover where an email address is registered and calcula
 
 **V** is a built-in cyberpunk AI assistant powered by the **Groq API** (LLaMA 3.3 70B).
 
-- Dispatches tasks directly to NetRunner backends: anonymizer, phishing, breach checker, tracker analyzer, **digital footprint**
-- Quick-action buttons: Anonymize, Email Scan, URL Check, Breach, Metadata, Tracker, **👣 Footprint**
+- Dispatches tasks directly to NetRunner backends: anonymizer, phishing, breach checker, tracker analyzer, digital footprint
+- Quick-action buttons: Anonymize, Email Scan, URL Check, Breach, Metadata, Tracker, Footprint
 - Natural language routing: detects intent from keywords in both Turkish and English
 - Detects user language (English/Turkish) and responds accordingly
 - Full conversation history maintained in-session
