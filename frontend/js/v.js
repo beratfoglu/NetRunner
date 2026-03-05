@@ -5,7 +5,7 @@
 // ═══ GROQ API CONFIG ═══
 const GROQ_API_KEY = 'YOUR_GROQ_API_KEY_IS_HERE';
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama-3.3-70b-versatile'; // The best groq
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
 // ── PIXEL ART GRID ───────────────────────────────────────────────
 const _=0,B=1,D=2,M=3,G=4,C=5,P=6,L=7,S=8;
@@ -81,6 +81,7 @@ document.body.insertAdjacentHTML('beforeend', `
       <button class="vq" onclick="vQuick('breach')">🔴 Breach</button>
       <button class="vq" onclick="vQuick('metadata')">📸 Metadata</button>
       <button class="vq" onclick="vQuick('tracker')">🍪 Tracker</button>
+      <button class="vq" onclick="vQuick('footprint')">👣 Footprint</button>
     </div>
     <div id="v-bar">
       <span id="v-pr">▸</span>
@@ -141,7 +142,7 @@ document.head.insertAdjacentHTML('beforeend', `<style>
 // ── STATE ────────────────────────────────────────────────────────
 let vOpen = false;
 let vWait = null;
-const vHist = [];  // Groq conversation history (OpenAI format)
+const vHist = [];
 
 // ── TOGGLE / CLOSE ───────────────────────────────────────────────
 function vToggle() {
@@ -227,6 +228,7 @@ function vQuick(a) {
     url:       'Drop the URL.',
     breach:    'Give me the email address.',
     tracker:   'Drop the URL to scan for trackers.',
+    footprint: 'Give me the email address to scan.',
   };
   vWait = a;
   vMsg('v', prompts[a]);
@@ -252,6 +254,11 @@ async function vSend() {
   if (/(tracker|cookie|takipçi|çerez|tracking|spy|hangi.*takip|takip.*var)/.test(t)) {
     const url = text.match(/https?:\/\/[^\s]+/)?.[0];
     url ? await vDo('tracker', url) : (vWait = 'tracker', vMsg('v', 'Drop the URL to scan for trackers.'));
+    return;
+  }
+  if (/(footprint|dijital.*iz|hangi.*platform|platform.*kayıt|email.*scan.*platform)/.test(t)) {
+    const em = text.match(/[\w.+-]+@[\w-]+\.[a-z]{2,}/i)?.[0];
+    em ? await vDo('footprint', em) : (vWait = 'footprint', vMsg('v', 'Give me the email address to scan.'));
     return;
   }
   if (/(https?:\/\/|check.*url|url.*check|sentinel)/.test(t)) {
@@ -287,6 +294,7 @@ function vOpenTool(t) {
     [/(password|şifre)/,                'password',    'Password Manager'],
     [/(anonymi|anonimle)/,              'anonymizer',  'Text Anonymizer'],
     [/(phishing|sentinel)/,             'phishing',    'Phishing Detector'],
+    [/(footprint|dijital.*iz)/,         'footprint',   'Digital Footprint'],
   ];
   for (const [re, tool, name] of map) {
     if (re.test(t)) {
@@ -295,14 +303,14 @@ function vOpenTool(t) {
       return;
     }
   }
-  vMsg('v', 'Available: Anonymizer, Phishing, Password, Temp Email, Metadata, WebRTC, Fingerprint, Tracker. Which one?');
+  vMsg('v', 'Available: Anonymizer, Phishing, Password, Temp Email, Metadata, WebRTC, Fingerprint, Tracker, Digital Footprint. Which one?');
 }
 
 // ── BACKEND DISPATCHER ───────────────────────────────────────────
 async function vDo(action, data) {
   vTypOn();
   try {
-    await ({ anonymize: vAnon, phishing: vPost, url: vSent, breach: vBre, tracker: vTracker }[action]?.(data));
+    await ({ anonymize: vAnon, phishing: vPost, url: vSent, breach: vBre, tracker: vTracker, footprint: vFootprint }[action]?.(data));
   } catch (e) {
     vTypOff();
     vMsg('v', '⚠️ Backend unreachable. Is the service running?');
@@ -404,7 +412,35 @@ async function vTracker(url) {
   } catch { vTypOff(); vMsg('v', '⚠️ Tracker Analyzer offline — run `backend/tracker_analyzer.py`'); }
 }
 
-// ═══ GROQ API (OpenAI-compatible format) ═══
+async function vFootprint(email) {
+  try {
+    vMsg('v', `Scanning **${email}** across 121 platforms... this takes ~12s, choom.`);
+    const r = await fetch('http://127.0.0.1:5006/scan', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+    vTypOff();
+    if (d.error) { vMsg('v', `⚠️ ${d.error}`); return; }
+
+    const rc = d.exposure_score >= 75 ? 'rh' : d.exposure_score >= 50 ? 'rm' : d.exposure_score >= 25 ? 'rm' : 'rl';
+    vMsg('v', d.found_count > 0
+      ? `**${d.found_count} accounts** found for ${email}. Exposure: **${d.exposure_label}**.`
+      : `No accounts found for **${email}**. Clean footprint.`);
+
+    const topFound = d.found?.slice(0, 5).map(f =>
+      `• <strong>${f.name}</strong> <span class="${f.risk === 'critical' ? 'rh' : f.risk === 'high' ? 'rm' : 'rl'}">[${f.risk.toUpperCase()}]</span>`
+    ).join('<br>') || '';
+
+    vCard(`<strong>${d.exposure_label === 'CLEAN' ? '✅ CLEAN' : d.exposure_score >= 50 ? '🚨 ' + d.exposure_label : '⚠️ ' + d.exposure_label}</strong><br><br>
+      Exposure: <span class="${rc}">${d.exposure_score}%</span> &nbsp;|&nbsp; Found: <span class="${rc}">${d.found_count}</span> &nbsp;|&nbsp; Scanned: ${d.platforms_scanned}<br>
+      Scan time: ${d.scan_time}s<br><br>
+      ${topFound ? '<span style="opacity:.6">Top findings:</span><br>' + topFound : ''}
+      <br><br><span style="opacity:.4;font-size:10px;">👣 Digital Footprint Analyzer — Holehe CLI</span>`);
+  } catch { vTypOff(); vMsg('v', '⚠️ Digital Footprint offline — run `backend/digital_footprint.py`'); }
+}
+
+// ═══ GROQ API ═══
 async function vGroq(text) {
   if (!GROQ_API_KEY || GROQ_API_KEY === 'YOUR_GROQ_API_KEY') {
     vMsg('v', 'Groq API key not set. Edit `js/v.js` → GROQ_API_KEY.\n\nI can still run all NetRunner tools directly.');
@@ -412,7 +448,7 @@ async function vGroq(text) {
   }
 
   vTypOn();
-  
+
   if (vHist.length === 0) {
     vHist.push({
       role: 'system',
@@ -430,6 +466,7 @@ NetRunner tools available:
 - WebRTC Leak Test: Detects IP leaks while using VPN
 - Fingerprint Analyzer: Browser fingerprinting analysis
 - Cookie & Tracker Analyzer: Scans any URL for hidden trackers, ad networks, fingerprinting scripts, and data brokers
+- Digital Footprint Analyzer: Scans 121 platforms to find where an email is registered, shows exposure score
 
 CRITICAL LANGUAGE RULE:
 - If user writes in Turkish → respond ENTIRELY in Turkish
@@ -442,52 +479,29 @@ NEVER mention port numbers (5000, 5001, etc.) to users - these are internal tech
     });
   }
 
-  const isTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(text) || 
+  const isTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(text) ||
                     /(merhaba|selam|nasıl|nedir|ne|yap|aç|kontrol|analiz|göster)/i.test(text);
-  
-  const langHint = isTurkish 
-    ? ' [RESPOND IN TURKISH ONLY]' 
-    : ' [RESPOND IN ENGLISH ONLY]';
-
+  const langHint = isTurkish ? ' [RESPOND IN TURKISH ONLY]' : ' [RESPOND IN ENGLISH ONLY]';
   vHist.push({ role: 'user', content: text + langHint });
 
   try {
     const r = await fetch(GROQ_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: vHist,
-        max_tokens: 350,
-        temperature: 0.7,
-        top_p: 1,
-        stream: false
-      })
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+      body: JSON.stringify({ model: GROQ_MODEL, messages: vHist, max_tokens: 350, temperature: 0.7, top_p: 1, stream: false })
     });
-
     const d = await r.json();
     vTypOff();
-
     if (d.error) {
       const msg = d.error.message || d.error.type || '';
-      if (msg.includes('rate_limit') || msg.includes('quota')) {
-        vMsg('v', '⏳ Groq rate limit hit. Wait a few seconds.');
-      } else if (msg.includes('invalid_api_key')) {
-        vMsg('v', '🔑 Invalid Groq API key. Check your key in v.js');
-      } else {
-        vMsg('v', `API error: ${msg}`);
-      }
-      vHist.pop();
-      return;
+      if (msg.includes('rate_limit') || msg.includes('quota')) vMsg('v', '⏳ Groq rate limit hit. Wait a few seconds.');
+      else if (msg.includes('invalid_api_key')) vMsg('v', '🔑 Invalid Groq API key. Check your key in v.js');
+      else vMsg('v', `API error: ${msg}`);
+      vHist.pop(); return;
     }
-
     const rep = d.choices?.[0]?.message?.content || 'Signal lost. Try again.';
     vHist.push({ role: 'assistant', content: rep });
     vMsg('v', rep);
-
   } catch (e) {
     vTypOff();
     vMsg('v', `Connection error: ${e.message}`);
@@ -502,7 +516,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.activeElement?.id === 'v-in') vSend();
 });
 
-// ── INITIALIZE ───────────────────────────────────────────────────
 setTimeout(() => {
   vDraw('v-art',  3);
   vDraw('v-mini', 2);

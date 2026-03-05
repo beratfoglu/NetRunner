@@ -107,7 +107,7 @@
   <div class="section">
     <div class="stats-row reveal">
       <div class="stat-item">
-        <span class="stat-num" data-target="9">0</span>
+        <span class="stat-num" data-target="10">0</span>
         <div class="stat-lbl" data-en="PRIVACY TOOLS" data-tr="GİZLİLİK ARACI">PRIVACY TOOLS</div>
       </div>
       <div class="stat-item">
@@ -124,7 +124,7 @@
   <!-- Tools Section -->
   <div class="section" style="padding-top:0;">
     <p class="section-label reveal-left" data-en="// TOOLS" data-tr="// ARAÇLAR">// TOOLS</p>
-    <h2 class="section-title reveal-left" data-en="Nine tools. One runner." data-tr="Dokuz araç. Tek runner.">Nine tools. One runner.</h2>
+    <h2 class="section-title reveal-left" data-en="Ten tools. One runner." data-tr="On araç. Tek runner.">Ten tools. One runner.</h2>
     <p class="section-desc reveal-left" data-en="Each module is independently powerful. Together, they form a complete privacy layer for your digital life." data-tr="Her modül kendi başına güçlüdür. Birlikte, dijital yaşamın için eksiksiz bir gizlilik katmanı oluştururlar.">
       Each module is independently powerful. Together, they form a complete privacy layer for your digital life.
     </p>
@@ -197,6 +197,15 @@
   </div>
   <span class="tag">20+ Trackers DB</span>
 </div>
+<div class="tool-card reveal" onclick="openTool('footprint')">
+  <div class="tool-icon">👣</div> 
+  <div class="tool-name" data-en="Digital Footprint" data-tr="Dijital İz Analizi">Digital Footprint</div>
+  <div class="tool-desc" data-en="Discover which platforms your email is registered on. Scan 45+ services and measure your digital exposure score." data-tr="E-postanızın hangi platformlara kayıtlı olduğunu keşfedin. 45+ servisi tarayın.">
+    Discover which platforms your email is registered on. Scan 45+ services and measure your digital exposure score.
+  </div>
+  <span class="tag">45+ Platforms</span>
+</div>
+     
     </div>
   </div>
 
@@ -278,6 +287,10 @@
         <div class="sidebar-item" onclick="openTool('tracker')" id="sb-tracker">
   <span class="sidebar-icon">🍪</span>
   <span data-en="Tracker Analyzer" data-tr="Takipçi Analizi">Tracker Analyzer</span>
+</div>
+         <div class="sidebar-item" onclick="openTool('footprint')" id="sb-footprint">
+  <span class="sidebar-icon">👣</span>
+  <span data-en="Digital Footprint" data-tr="Dijital İz">Digital Footprint</span>
 </div>
 
       <div class="sidebar-section">
@@ -711,6 +724,46 @@
         </div>
       </div>
       <!-- /tracker-tool -->
+       <div class="tool-panel" id="footprint-tool">
+  <div class="panel-header">
+    <div class="panel-title">👣 <span data-en="Digital Footprint Analyzer" data-tr="Dijital İz Analizi">Digital Footprint Analyzer</span></div>
+    <div class="panel-desc" data-en="Enter an email address to discover which platforms it's registered on. Scan 45+ services and measure your digital exposure score." data-tr="Hangi platformlara kayıtlı olduğunuzu keşfetmek için e-posta adresinizi girin.">
+      Enter an email address to discover which platforms it's registered on. Scan 45+ services and measure your digital exposure score.
+    </div>
+  </div>
+
+  <!-- INFO BOX -->
+  <div style="background:rgba(255,68,102,0.04);border:1px solid rgba(255,68,102,0.15);border-radius:8px;padding:16px;margin-bottom:24px;">
+    <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px;">⚠️ <span data-en="How It Works" data-tr="Nasıl Çalışır">How It Works</span></div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.6;" data-en="This tool uses the 'forgot password' flow on 45+ platforms to check if an account exists — no passwords are entered, no accounts are accessed. Results are informational only." data-tr="Bu araç, hesap varlığını kontrol etmek için 45+ platformda 'şifremi unuttum' akışını kullanır — herhangi bir şifre girilmez.">
+      This tool uses the "forgot password" flow on 45+ platforms to check if an account exists — no passwords are entered, no accounts are accessed. Results are informational only.
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label class="input-label" data-en="EMAIL ADDRESS" data-tr="E-POSTA ADRESİ">EMAIL ADDRESS</label>
+    <input type="email" class="input" id="footprint-input" 
+           placeholder="target@example.com"
+           onkeydown="if(event.key==='Enter') runDigitalFootprint()"/>
+  </div>
+
+  <button class="btn btn-primary" onclick="runDigitalFootprint()" id="footprint-btn">
+    <span data-en="🔍 Scan Digital Footprint" data-tr="🔍 Dijital İzi Tara">🔍 Scan Digital Footprint</span>
+  </button>
+
+  <!-- RESULT BOX -->
+  <div class="result-box" id="footprint-result" style="margin-top:24px;">
+    <div id="footprint-risk-header"></div>
+    <div class="score-row" style="margin-top:20px;">
+      <div class="score-label" data-en="Exposure Score" data-tr="Maruz Kalma Skoru">Exposure Score</div>
+      <div class="score-bar-wrap"><div class="progress-bar" id="footprint-bar"></div></div>
+      <div class="score-value" id="footprint-score-val">0%</div>
+    </div>
+    <div id="footprint-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;"></div>
+    <div id="footprint-categories" style="margin-top:24px;"></div>
+  </div>
+</div>
+<!-- /footprint-tool -->
 
     </main>
   </div>

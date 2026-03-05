@@ -136,6 +136,7 @@ function openTool(toolName) {
     'metadata': 'metadata-tool',
     'webrtc': 'webrtc-tool'  ,
     'tracker': 'tracker-tool',
+    'footprint': 'footprint-tool',
   };
   
   const panelId = toolMap[toolName];
@@ -1883,4 +1884,174 @@ function _renderTrackerResults(data) {
           </div>`).join('')}
       </div>
     </div>`;
+}
+const RISK_COLORS_FP = {
+  CRITICAL: 'var(--red)',
+  HIGH:     'var(--red)',
+  MEDIUM:   'var(--yellow)',
+  LOW:      'var(--accent)',
+  CLEAN:    'var(--green)'
+};
+
+const RISK_ICONS_FP = {
+  CRITICAL: '🚨',
+  HIGH:     '🔴',
+  MEDIUM:   '⚠️',
+  LOW:      '🔵',
+  CLEAN:    '✅'
+};
+
+async function runDigitalFootprint() {
+  const email = document.getElementById('footprint-input').value.trim();
+  if (!email) return;
+
+  // Basit email validasyonu
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('footprint-result').classList.add('show');
+    document.getElementById('footprint-risk-header').innerHTML = `
+      <div style="background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.3);border-radius:8px;padding:16px;">
+        <div style="color:var(--red);font-weight:700;">❌ Invalid email address</div>
+      </div>`;
+    return;
+  }
+
+  const btn = document.getElementById('footprint-btn');
+  btn.innerHTML = `<span class="spinner spinner-light"></span> ${currentLang === 'tr' ? 'Taranıyor...' : 'Scanning...'}`;
+  btn.disabled = true;
+
+  const resultBox = document.getElementById('footprint-result');
+  resultBox.classList.add('show');
+
+  // Loading state
+  document.getElementById('footprint-risk-header').innerHTML = `
+    <div style="text-align:center;padding:30px;color:var(--text2);font-size:13px;">
+      🔍 ${currentLang === 'tr' ? 'Platformlar taranıyor, lütfen bekleyin...' : 'Scanning platforms, please wait...'}
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;">${currentLang === 'tr' ? 'Bu işlem 15-30 saniye sürebilir.' : 'This may take 15-30 seconds.'}</div>
+    </div>`;
+  document.getElementById('footprint-stats').innerHTML = '';
+  document.getElementById('footprint-categories').innerHTML = '';
+  document.getElementById('footprint-bar').style.width = '0%';
+  document.getElementById('footprint-score-val').textContent = '0%';
+
+  try {
+    const res = await fetch('http://127.0.0.1:5006/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Scan failed');
+    }
+
+    const data = await res.json();
+    _renderFootprintResults(data);
+
+  } catch (err) {
+    document.getElementById('footprint-risk-header').innerHTML = `
+      <div style="background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.3);border-radius:8px;padding:16px;">
+        <div style="color:var(--red);font-weight:700;margin-bottom:6px;">❌ ${currentLang === 'tr' ? 'Tarama başarısız' : 'Scan failed'}</div>
+        <div style="font-size:12px;color:var(--text2);">${err.message}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;">${currentLang === 'tr' ? 'Backend çalışıyor mu? python digital_footprint.py' : 'Is backend running? python digital_footprint.py'}</div>
+      </div>`;
+  }
+
+  btn.innerHTML = `<span>${currentLang === 'tr' ? '🔍 Dijital İzi Tara' : '🔍 Scan Digital Footprint'}</span>`;
+  btn.disabled = false;
+}
+
+function _renderFootprintResults(data) {
+  const score = data.exposure_score;
+  const label = data.exposure_label;
+  const color = RISK_COLORS_FP[label] || 'var(--green)';
+  const icon  = RISK_ICONS_FP[label]  || '✅';
+
+  // ── RISK HEADER ──
+  document.getElementById('footprint-risk-header').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">${currentLang === 'tr' ? 'TARANAN E-POSTA' : 'SCANNED EMAIL'}</div>
+        <div style="font-size:15px;font-weight:700;color:var(--accent);font-family:var(--font-mono);">${data.email}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">${currentLang === 'tr' ? 'MARUZ KALMA SEVİYESİ' : 'EXPOSURE LEVEL'}</div>
+        <div style="font-size:20px;font-weight:800;color:${color};">${icon} ${label}</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:12px;color:var(--text2);">
+      ${data.summary}
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text3);">
+      ⏱ ${currentLang === 'tr' ? 'Tarama süresi' : 'Scan time'}: ${data.scan_time}s &nbsp;|&nbsp; 
+      📡 ${data.platforms_scanned} ${currentLang === 'tr' ? 'platform tarandı' : 'platforms scanned'}
+    </div>`;
+
+  // ── SCORE BAR ──
+  document.getElementById('footprint-bar').style.cssText = `width:${score}%;background:${color};transition:width 1s ease;`;
+  document.getElementById('footprint-score-val').style.color = color;
+  document.getElementById('footprint-score-val').textContent = score + '%';
+
+  // ── STATS ──
+  const rb = data.risk_breakdown;
+  document.getElementById('footprint-stats').innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:${color};">${data.found_count}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'HESAP BULUNDU' : 'ACCOUNTS FOUND'}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:var(--red);">${rb.critical + rb.high}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'YÜKSEK RİSK' : 'HIGH RISK'}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:28px;font-weight:800;color:${score >= 40 ? 'var(--red)' : 'var(--green)'};">${score}%</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'MARUZ KALMA' : 'EXPOSURE'}</div>
+    </div>`;
+
+  // ── RISK BREAKDOWN ──
+  const riskSection = document.getElementById('footprint-categories');
+
+  if (data.found_count === 0) {
+    riskSection.innerHTML = `
+      <div style="text-align:center;padding:30px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:8px;">
+        <div style="font-size:40px;margin-bottom:12px;">✅</div>
+        <div style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:6px;">${currentLang === 'tr' ? 'Hesap Bulunamadı' : 'No Accounts Found'}</div>
+        <div style="font-size:12px;color:var(--text2);">${currentLang === 'tr' ? 'Bu e-posta taranan platformlarda bulunamadı.' : 'This email was not found on any scanned platform.'}</div>
+      </div>`;
+    return;
+  }
+
+  let html = `<div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:12px;">${currentLang === 'tr' ? 'BULUNAN HESAPLAR' : 'FOUND ACCOUNTS'}</div>`;
+
+  // Kategorilere göre grupla
+  for (const [cat, accounts] of Object.entries(data.by_category)) {
+    html += `
+      <div style="margin-bottom:20px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;opacity:0.7;letter-spacing:1px;">
+          ${cat.toUpperCase()} <span style="font-size:10px;opacity:0.5;">(${accounts.length})</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;">`;
+
+    accounts.forEach(acc => {
+      const riskColor =
+        acc.risk === 'critical' ? 'var(--red)' :
+        acc.risk === 'high'     ? 'var(--red)' :
+        acc.risk === 'medium'   ? 'var(--yellow)' : 'var(--accent)';
+
+      html += `
+        <div style="background:var(--surface);border:1px solid ${riskColor}33;border-radius:8px;padding:12px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:20px;">${acc.icon}</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);">${acc.name}</div>
+            <div style="font-size:10px;font-weight:700;color:${riskColor};margin-top:2px;">${acc.risk.toUpperCase()}</div>
+          </div>
+        </div>`;
+    });
+
+    html += `</div></div>`;
+  }
+
+  riskSection.innerHTML = html;
+
+  
 }

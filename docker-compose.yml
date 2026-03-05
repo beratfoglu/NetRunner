@@ -54,6 +54,14 @@ services:
       - "5005:5005"
     restart: unless-stopped
 
+  digital_footprint:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.digital_footprint
+    ports:
+      - "5006:5006"
+    restart: unless-stopped
+
   postwatch_ai:
     build:
       context: ./postwatch_ai
