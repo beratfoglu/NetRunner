@@ -2,7 +2,7 @@
 
 > *Leave no trace. Trust no node.*
 
-A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered text anonymization, AI-driven phishing detection, cryptographic password management, disposable email generation, browser fingerprint analysis, cookie & tracker detection — all running locally with zero data stored server-side.
+A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered text anonymization, AI-driven phishing detection, cryptographic password management, disposable email generation, browser fingerprint analysis, cookie & tracker detection, and digital footprint scanning — all running locally with zero data stored server-side.
 
 ---
 
@@ -71,6 +71,11 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ---
 
+### 👣 Digital Footprint Analyzer
+![Digital Footprint](ScreenShots/footprint.png)
+
+---
+
 ### 🤖 V — AI Handler
 ![V AI Handler](ScreenShots/V.png)
 
@@ -83,7 +88,7 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ## Features
 
-NetRunner bundles **9 privacy tools** into a single, locally-hosted web application.
+NetRunner bundles **10 privacy tools** into a single, locally-hosted web application.
 
 ### 🔏 Text Anonymizer
 Detects and masks Personally Identifiable Information (PII) in any text using a **hybrid NLP engine** — a spaCy transformer model (`en_core_web_md`) combined with high-priority regex patterns.
@@ -162,14 +167,25 @@ Scans any URL for hidden trackers, ad networks, session recorders, and data brok
 - Cookie security flag analysis: Secure, HttpOnly, SameSite
 - Per-tracker details: company name, description, risk level, matched domain/script
 
+### 👣 Digital Footprint Analyzer
+Scans 121 platforms to discover where an email address is registered and calculates an exposure score.
+
+- Powered by **Holehe CLI** — checks 121 services using the "forgot password" flow; no passwords entered, no accounts accessed
+- **Exposure scoring**: weighted risk system across 4 levels — Critical (+15), High (+8), Medium (+4), Low (+2) — normalized to 0–100%
+- **Exposure labels**: CLEAN / LOW / MEDIUM / HIGH / CRITICAL
+- Results grouped by category: Social Media, Developer, Gaming, Streaming, Finance, Shopping, Professional, Productivity, Education, Dating
+- **70+ platform metadata**: icons, categories, and risk levels for known platforms
+- Gravatar profile lookup via MD5 email hash
+- Scan time: ~10–15 seconds for 121 platforms
+
 ---
 
 ## V — AI Handler
 
 **V** is a built-in cyberpunk AI assistant powered by the **Groq API** (LLaMA 3.3 70B).
 
-- Dispatches tasks directly to NetRunner backends: anonymizer, phishing, breach checker, **tracker analyzer**
-- Quick-action buttons: Anonymize, Email Scan, URL Check, Breach, Metadata, **Tracker**
+- Dispatches tasks directly to NetRunner backends: anonymizer, phishing, breach checker, tracker analyzer, **digital footprint**
+- Quick-action buttons: Anonymize, Email Scan, URL Check, Breach, Metadata, Tracker, **👣 Footprint**
 - Natural language routing: detects intent from keywords in both Turkish and English
 - Detects user language (English/Turkish) and responds accordingly
 - Full conversation history maintained in-session
@@ -214,6 +230,7 @@ NetRunner/
 │   ├── breach_checker.py       # BreachDirectory API     → port 5003
 │   ├── fingerprint_analyzer.py # Entropy model           → port 5004
 │   ├── metadata_cleaner.py     # Pillow EXIF             → port 5005
+│   ├── digital_footprint.py    # Holehe CLI              → port 5006
 │   ├── tracker_analyzer.py     # Playwright + BS4        → port 5008
 │   ├── entropy_model.py        # Entropy calculations (imported by fingerprint_analyzer)
 │   ├── ratelimit.db            # SQLite rate limit store (auto-created)
@@ -235,6 +252,7 @@ NetRunner/
 │
 ├── Dockerfile.anonymizer
 ├── Dockerfile.breach_checker
+├── Dockerfile.digital_footprint
 ├── Dockerfile.fingerprint_analyzer
 ├── Dockerfile.metadata_cleaner
 ├── Dockerfile.temp_email
@@ -254,6 +272,7 @@ NetRunner/
 | 5003 | Email Breach Checker | BreachDirectory (RapidAPI) |
 | 5004 | Browser Fingerprint Analyzer | Entropy model (Python) |
 | 5005 | Image Metadata Cleaner | Pillow |
+| 5006 | Digital Footprint Analyzer | Holehe CLI |
 | 5007 | PostWatch AI — Email Phishing | DistilBERT (HuggingFace Transformers) |
 | 5008 | Cookie & Tracker Analyzer | Playwright + Chromium + BeautifulSoup4 |
 
@@ -267,7 +286,7 @@ There are two ways to run NetRunner: **Docker** (recommended) or **manual**.
 
 ### 🐳 Option A — Docker (Recommended)
 
-The easiest way to run all 8 backend services with a single command.
+The easiest way to run all 10 backend services with a single command.
 
 #### Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -305,7 +324,7 @@ docker-compose up --build
 
 #### 4. Open the frontend
 
-Open `frontend/index.html` in your browser. All 8 services are now running.
+Open `frontend/index.html` in your browser. All 10 services are now running.
 
 #### Managing services
 
@@ -360,14 +379,20 @@ playwright install chromium
 
 > Optional but recommended for better stealth: `pip install playwright-stealth`
 
-#### 4. Install Sentinel AI dependencies
+#### 4. Install Digital Footprint dependencies
+
+```bash
+pip install holehe
+```
+
+#### 5. Install Sentinel AI dependencies
 
 ```bash
 cd sentinel_ai
 pip install flask flask-cors scikit-learn pandas numpy scipy
 ```
 
-#### 5. Install PostWatch AI dependencies
+#### 6. Install PostWatch AI dependencies
 
 ```bash
 cd postwatch_ai
@@ -376,7 +401,7 @@ pip install flask flask-cors torch transformers
 
 > **Note:** The `email_phishing_model/` directory must contain the fine-tuned DistilBERT model files: `config.json`, `model.safetensors`, `tokenizer.json`, `tokenizer_config.json`. These are not included in the repository due to file size.
 
-#### 6. Configure API keys
+#### 7. Configure API keys
 
 **Breach Checker** — BreachDirectory (RapidAPI):
 1. Sign up at [rapidapi.com](https://rapidapi.com)
@@ -395,7 +420,7 @@ export RAPIDAPI_KEY=your_key_here     # macOS/Linux
 const GROQ_API_KEY = 'YOUR_GROQ_API_KEY';
 ```
 
-#### 7. Start all backend services
+#### 8. Start all backend services
 
 Open a separate terminal for each service:
 
@@ -418,14 +443,17 @@ cd backend && python fingerprint_analyzer.py
 # Terminal 6 — Metadata Cleaner
 cd backend && python metadata_cleaner.py
 
-# Terminal 7 — PostWatch AI (email phishing)
+# Terminal 7 — Digital Footprint Analyzer
+cd backend && python digital_footprint.py
+
+# Terminal 8 — PostWatch AI (email phishing)
 cd postwatch_ai && python app.py
 
-# Terminal 8 — Cookie & Tracker Analyzer
+# Terminal 9 — Cookie & Tracker Analyzer
 cd backend && python tracker_analyzer.py
 ```
 
-#### 8. Open the frontend
+#### 9. Open the frontend
 
 Open `frontend/index.html` directly in your browser — no web server required.
 
@@ -446,6 +474,7 @@ Open `frontend/index.html` directly in your browser — no web server required.
 | ML — Email | HuggingFace Transformers, DistilBERT, PyTorch |
 | Headless Browser | Playwright + Chromium + playwright-stealth |
 | Tracker Database | 32+ known trackers (4 risk categories) |
+| Digital Footprint | Holehe CLI (121 platforms) |
 | Database | SQLite (rate limiting) |
 | Image processing | Pillow |
 | Email API | Mail.tm |
@@ -464,6 +493,7 @@ Open `frontend/index.html` directly in your browser — no web server required.
 - **Local-first**: all AI models run on your own machine; no data is sent to external AI services unless the Groq API key is configured for V
 - **API keys**: never hardcoded — loaded via `.env` file (excluded from version control)
 - **Tracker Analyzer**: URLs you scan are fetched server-side — the target site sees your server IP, not your browser
+- **Digital Footprint Analyzer**: uses the "forgot password" flow to check platform registration — no passwords are entered and no accounts are accessed; results are informational only
 
 ---
 
@@ -475,6 +505,7 @@ Open `frontend/index.html` directly in your browser — no web server required.
 - On Windows, terminal output encoding is handled automatically via `sys.stdout` UTF-8 override in each backend file
 - WebRTC leak test results may vary depending on browser privacy settings and VPN configuration
 - First `docker-compose up --build` takes several minutes due to PyTorch + Playwright/Chromium downloads; subsequent runs use cached layers
+- Digital Footprint scan takes ~10–15 seconds — Holehe checks 121 platforms sequentially
 
 ---
 
