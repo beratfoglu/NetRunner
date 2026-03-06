@@ -2,7 +2,7 @@
 
 > *Leave no trace. Trust no node.*
 
-A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered text anonymization, AI-driven phishing detection, cryptographic password management, disposable email generation, browser fingerprint analysis, cookie & tracker detection, and digital footprint scanning — all running locally with zero data stored server-side.
+A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered text anonymization, AI-driven phishing detection, cryptographic password management, disposable email generation, browser fingerprint analysis, cookie & tracker detection, digital footprint scanning, and AI face generation — all running locally with zero data stored server-side.
 
 ---
 
@@ -76,6 +76,11 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ---
 
+### 🎭 Privacy Cloak
+![Privacy Cloak](ScreenShots/privacy_cloak.png)
+
+---
+
 ### 🤖 V — AI Handler
 ![V AI Handler](ScreenShots/V.png)
 
@@ -88,7 +93,7 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ## Features
 
-NetRunner bundles **10 privacy tools** into a single, locally-hosted web application.
+NetRunner bundles **11 privacy tools** into a single, locally-hosted web application.
 
 ### 🔏 Text Anonymizer
 Detects and masks Personally Identifiable Information (PII) in any text using a **hybrid NLP engine** — a spaCy transformer model (`en_core_web_md`) combined with high-priority regex patterns.
@@ -178,6 +183,15 @@ Scans 121 platforms to discover where an email address is registered and calcula
 - Gravatar profile lookup via MD5 email hash
 - Scan time: ~10–15 seconds for 121 platforms
 
+### 🎭 Privacy Cloak
+Generates photorealistic faces of people who do not exist, for use when platforms demand identity verification that unnecessarily collects biometric data.
+
+- Powered by **StyleGAN2** via thispersondoesnotexist.com — every face is 100% synthetic
+- Watermark automatically cropped from generated images
+- All EXIF metadata stripped before download
+- Random User-Agent rotation + cache-busting ensures a different face on every request
+- One-click download as JPEG
+
 ---
 
 ## V — AI Handler
@@ -232,6 +246,7 @@ NetRunner/
 │   ├── metadata_cleaner.py     # Pillow EXIF             → port 5005
 │   ├── digital_footprint.py    # Holehe CLI              → port 5006
 │   ├── tracker_analyzer.py     # Playwright + BS4        → port 5008
+│   ├── privacy_cloak.py        # StyleGAN2 + Pillow      → port 5009
 │   ├── entropy_model.py        # Entropy calculations (imported by fingerprint_analyzer)
 │   ├── ratelimit.db            # SQLite rate limit store (auto-created)
 │   ├── requirements.txt
@@ -257,6 +272,7 @@ NetRunner/
 ├── Dockerfile.metadata_cleaner
 ├── Dockerfile.temp_email
 ├── Dockerfile.tracker_analyzer
+├── Dockerfile.privacy_cloak
 ├── .env.example                # API key template
 ├── docker-compose.yml          # Single-command startup for all services
 └── ScreenShots/
@@ -275,6 +291,7 @@ NetRunner/
 | 5006 | Digital Footprint Analyzer | Holehe CLI |
 | 5007 | PostWatch AI — Email Phishing | DistilBERT (HuggingFace Transformers) |
 | 5008 | Cookie & Tracker Analyzer | Playwright + Chromium + BeautifulSoup4 |
+| 5009 | Privacy Cloak | StyleGAN2 + Pillow |
 
 ---
 
@@ -286,7 +303,7 @@ There are two ways to run NetRunner: **Docker** (recommended) or **manual**.
 
 ### 🐳 Option A — Docker (Recommended)
 
-The easiest way to run all 10 backend services with a single command.
+The easiest way to run all 11 backend services with a single command.
 
 #### Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -324,7 +341,7 @@ docker-compose up --build
 
 #### 4. Open the frontend
 
-Open `frontend/index.html` in your browser. All 10 services are now running.
+Open `frontend/index.html` in your browser. All 11 services are now running.
 
 #### Managing services
 
@@ -451,6 +468,9 @@ cd postwatch_ai && python app.py
 
 # Terminal 9 — Cookie & Tracker Analyzer
 cd backend && python tracker_analyzer.py
+
+# Terminal 10 — Privacy Cloak
+cd backend && python privacy_cloak.py
 ```
 
 #### 9. Open the frontend
@@ -475,6 +495,7 @@ Open `frontend/index.html` directly in your browser — no web server required.
 | Headless Browser | Playwright + Chromium + playwright-stealth |
 | Tracker Database | 32+ known trackers (4 risk categories) |
 | Digital Footprint | Holehe CLI (121 platforms) |
+| Face Generation | StyleGAN2 via thispersondoesnotexist.com |
 | Database | SQLite (rate limiting) |
 | Image processing | Pillow |
 | Email API | Mail.tm |
@@ -494,6 +515,7 @@ Open `frontend/index.html` directly in your browser — no web server required.
 - **API keys**: never hardcoded — loaded via `.env` file (excluded from version control)
 - **Tracker Analyzer**: URLs you scan are fetched server-side — the target site sees your server IP, not your browser
 - **Digital Footprint Analyzer**: uses the "forgot password" flow to check platform registration — no passwords are entered and no accounts are accessed; results are informational only
+- **Privacy Cloak**: generated faces are 100% synthetic — the person does not exist; no real biometric data is used or stored
 
 ---
 

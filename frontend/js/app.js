@@ -137,6 +137,7 @@ function openTool(toolName) {
     'webrtc': 'webrtc-tool'  ,
     'tracker': 'tracker-tool',
     'footprint': 'footprint-tool',
+    'cloak': 'cloak-tool',
   };
   
   const panelId = toolMap[toolName];
@@ -494,81 +495,6 @@ async function runEmailPhish() {
     btn.innerHTML = `<span>${currentLang === 'tr' ? 'E-posta İçeriğini Analiz Et' : 'Analyze Email Content'}</span>`;
     btn.disabled = false;
   }
-}
-
-function _renderEmailPhishAI(data) {
-  const pred = data.prediction;
-  const probs = data.probabilities;
-  
-  const badgeEl = document.getElementById('email-phish-badge');
-  
-  let badgeClass, badgeIcon, badgeText;
-  
-  if (pred.risk_level === 'critical') {
-    badgeClass = 'badge-danger';
-    badgeIcon = '🚨';
-    badgeText = currentLang === 'tr' ? 'KRİTİK RİSK — Kesinlikle Phishing' : 'CRITICAL RISK — Definitely Phishing';
-  } else if (pred.risk_level === 'high') {
-    badgeClass = 'badge-danger';
-    badgeIcon = '🔴';
-    badgeText = currentLang === 'tr' ? 'YÜKSEK RİSK — Muhtemel Phishing' : 'HIGH RISK — Likely Phishing';
-  } else if (pred.risk_level === 'medium') {
-    badgeClass = 'badge-warning';
-    badgeIcon = '⚠️';
-    badgeText = currentLang === 'tr' ? 'ORTA RİSK — Şüpheli' : 'MEDIUM RISK — Suspicious';
-  } else if (pred.risk_level === 'low') {
-    badgeClass = 'badge-warning';
-    badgeIcon = '⚠️';
-    badgeText = currentLang === 'tr' ? 'DÜŞÜK RİSK — Hafif Şüpheli' : 'LOW RISK — Slightly Suspicious';
-  } else {
-    badgeClass = 'badge-success';
-    badgeIcon = '✅';
-    badgeText = currentLang === 'tr' ? 'GÜVENLİ — Phishing Değil' : 'SAFE — Not Phishing';
-  }
-  
-  badgeEl.innerHTML = `<div class="badge ${badgeClass}">${badgeIcon} ${badgeText} (${pred.risk_score}%)</div>`;
-  badgeEl.innerHTML += `<div style="display:inline-block;margin-left:8px;padding:4px 8px;background:rgba(0,255,170,0.1);border:1px solid rgba(0,255,170,0.3);border-radius:4px;font-size:10px;color:var(--accent);">📬 POSTWATCH AI</div>`;
-  
-  const color = pred.is_phishing ? 'var(--red)' : 'var(--green)';
-  document.getElementById('email-phish-bar').style.cssText = `width:${pred.risk_score}%;background:${color}`;
-  document.getElementById('email-phish-score').style.color = color;
-  document.getElementById('email-phish-score').textContent = pred.risk_score + '%';
-  
-  document.getElementById('email-score-grid').innerHTML = `
-    <div class="email-score-card">
-      <div class="esc-icon">🤖</div>
-      <div class="esc-label">PostWatch AI</div>
-      <div class="esc-value" style="color:var(--accent);">DistilBERT</div>
-    </div>
-    <div class="email-score-card">
-      <div class="esc-icon">🎯</div>
-      <div class="esc-label">Accuracy</div>
-      <div class="esc-value" style="color:var(--accent);">97.6%</div>
-    </div>
-    <div class="email-score-card">
-      <div class="esc-icon">🟢</div>
-      <div class="esc-label">Safe Probability</div>
-      <div class="esc-value" style="color:var(--green);">${(probs.safe * 100).toFixed(1)}%</div>
-    </div>
-    <div class="email-score-card">
-      <div class="esc-icon">🔴</div>
-      <div class="esc-label">Phishing Probability</div>
-      <div class="esc-value" style="color:var(--red);">${(probs.phishing * 100).toFixed(1)}%</div>
-    </div>
-    <div class="email-score-card">
-      <div class="esc-icon">📊</div>
-      <div class="esc-label">Confidence</div>
-      <div class="esc-value" style="color:var(--accent);">${(pred.confidence > 1 ? pred.confidence : pred.confidence * 100).toFixed(1)}%</div>
-    </div>
-    <div class="email-score-card">
-      <div class="esc-icon">⚡</div>
-      <div class="esc-label">Risk Level</div>
-      <div class="esc-value" style="color:${color};">${pred.risk_level.toUpperCase()}</div>
-    </div>
-  `;
-  
-  document.getElementById('email-keywords').innerHTML = `<span style="color:var(--accent);font-size:12px;">📬 Analyzed by PostWatch AI - Neural Email Defense System</span>`;
-  document.getElementById('email-phish-result').classList.add('show');
 }
 
 function _renderEmailPhishAI(data) {
@@ -2054,4 +1980,122 @@ function _renderFootprintResults(data) {
   riskSection.innerHTML = html;
 
   
+}
+// ══════════════════════════════════════════════════════════════════════════
+// PRIVACY CLOAK
+// ══════════════════════════════════════════════════════════════════════════
+
+let cloakImageData = null; // Generated image base64 stored for download
+
+// ── TAB SWITCH ── 
+function setCloakTab(tab) {
+  document.getElementById('ctab-generate').classList.toggle('active', tab === 'generate');
+  document.getElementById('cloak-generate').style.display = tab === 'generate' ? 'block' : 'none';
+  document.getElementById('cloak-result').classList.remove('show');
+}
+
+
+// ── RENDER RESULT ──
+function _renderCloakResult(data, mode) {
+  cloakImageData = data.image; // Store for download
+
+  // Status header
+  document.getElementById('cloak-status').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">${currentLang === 'tr' ? 'DURUM' : 'STATUS'}</div>
+        <div style="font-size:16px;font-weight:700;color:var(--green);">✅ ${currentLang === 'tr' ? 'Yüz Üretildi' : 'Face Generated'}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">ENGINE</div>
+        <div style="font-size:13px;font-weight:700;color:var(--accent);">StyleGAN2</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:8px 12px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:11px;color:var(--text2);">
+      ${data.source} &nbsp;|&nbsp; ${currentLang === 'tr' ? 'Bu kişi gerçek değildir.' : 'This person does not exist.'}
+    </div>`;
+
+  // Image preview
+  document.getElementById('cloak-preview').src = data.image;
+  document.getElementById('cloak-image-section').style.display = 'block';
+
+  // Stats
+  document.getElementById('cloak-stats').innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:18px;font-weight:800;color:var(--green);">✅</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'METADATA TEMİZLENDİ' : 'METADATA STRIPPED'}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:18px;font-weight:800;color:var(--accent);">${data.dimensions}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'BOYUT' : 'DIMENSIONS'}</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">
+      <div style="font-size:18px;font-weight:800;color:var(--accent);">${data.elapsed}s</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'SÜRE' : 'TIME'}</div>
+    </div>`;
+
+  // Show/hide regen button based on mode
+  const regenBtn = document.getElementById('cloak-regen-btn');
+  if (regenBtn) regenBtn.style.display = mode === 'blend' ? 'none' : 'block';
+}
+
+// ── DOWNLOAD ──
+function downloadCloakImage() {
+  if (!cloakImageData) return;
+  const a = document.createElement('a');
+  a.href = cloakImageData;
+  a.download = `netrunner_cloak_${Date.now()}.jpg`;
+  a.click();
+}
+
+// ── V CHATBOT INTEGRATION ──
+// 'cloak': vCloak
+async function vCloak(input) {
+  vMsg('v', `${currentLang === 'tr' ? 'Privacy Cloak açılıyor...' : 'Opening Privacy Cloak...'}`);
+  setTimeout(() => {
+    if (typeof openTool === 'function') openTool('cloak');
+    setTimeout(() => runCloakGenerate(), 500);
+  }, 600);
+}
+async function runCloakGenerate() {
+   const btn = document.getElementById('cloak-generate-btn');
+
+  btn.innerHTML = `<span class="spinner spinner-light"></span> ${currentLang === 'tr' ? 'Üretiliyor...' : 'Generating...'}`;
+  btn.disabled = true;
+
+  const resultBox = document.getElementById('cloak-result');
+  resultBox.classList.add('show');
+  document.getElementById('cloak-status').innerHTML = `
+    <div style="color:var(--text2);font-size:12px;padding:12px 0;">
+      ⏳ ${currentLang === 'tr' ? 'SDXL modeli çalışıyor, lütfen bekleyin...' : 'SDXL model is running, please wait...'}
+    </div>`;
+  document.getElementById('cloak-image-section').style.display = 'none';
+  document.getElementById('cloak-stats').innerHTML = '';
+  document.getElementById('cloak-actions').style.display = 'none';
+
+  try {
+    const res = await fetch('http://127.0.0.1:5009/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+
+    if (!res.ok) throw new Error('Backend error');
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Generation failed');
+
+    _renderCloakResult(data, 'generate');
+    document.getElementById('cloak-actions').style.display = 'flex';
+
+  } catch (err) {
+    document.getElementById('cloak-status').innerHTML = `
+      <div style="background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.3);border-radius:8px;padding:16px;">
+        <div style="color:var(--red);font-weight:700;">❌ ${currentLang === 'tr' ? 'Üretim başarısız' : 'Generation failed'}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:6px;">${err.message}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;">${currentLang === 'tr' ? 'Backend çalışıyor mu? python privacy_cloak.py' : 'Is backend running? python privacy_cloak.py'}</div>
+      </div>`;
+  }
+
+  btn.innerHTML = `<span>${currentLang === 'tr' ? '🎭 Anonim Yüz Üret' : '🎭 Generate Anonymous Face'}</span>`;
+  btn.disabled = false;
 }

@@ -79,5 +79,15 @@ services:
     restart: unless-stopped
     shm_size: '2gb'
 
+    
+    
+  privacy_cloak:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.privacy_cloak
+    ports:
+      - "5009:5009"
+    restart: unless-stopped
+
 volumes:
   ratelimit_data:

@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY privacy_cloak.py .
+
+RUN pip install flask flask-cors requests Pillow
+
+EXPOSE 5009
+CMD ["python", "privacy_cloak.py"]
