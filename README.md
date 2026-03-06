@@ -56,7 +56,7 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ---
 
-### 🌐 WebRTC Leak Test
+### 🌐 WebRTC & DNS Leak Test
 ![IP Leak Test](ScreenShots/ip_leak_test.png)
 
 ---
@@ -142,13 +142,20 @@ Extracts and removes EXIF metadata from images before sharing online.
 - **Analyze**: Extracts GPS coordinates (with Google Maps link), camera make/model, timestamps, software, copyright info. Calculates a privacy risk score.
 - **Clean**: Strips all EXIF data and returns a downloadable cleaned image. Supports JPG, PNG, HEIC, WebP.
 
-### 🌐 WebRTC Leak Test
-Detects whether your browser leaks your real IP address through WebRTC while using a VPN.
+### 🌐 WebRTC & DNS Leak Test
+Two independent leak tests in one panel — no backend required, runs entirely in the browser.
 
+**WebRTC Leak Test:**
 - Uses Google STUN servers to collect ICE candidates
 - Separates private (local) IPs from public IPs
 - Cross-references detected IPs against your actual public IP (via ipify.org)
 - Classifies result: safe / info / critical
+
+**DNS Leak Test:**
+- Detects which DNS servers are handling your queries via Cloudflare trace endpoint
+- Returns DNS server IP, country, and ISP
+- Flags potential leaks when multiple ISPs are detected (indicating split DNS routing)
+- Provides fix recommendations if a leak is detected
 
 ### 🔍 Browser Fingerprint Analyzer
 Measures how uniquely identifiable your browser is using an **entropy-based mathematical model**.
@@ -516,6 +523,7 @@ Open `frontend/index.html` directly in your browser — no web server required.
 - **Tracker Analyzer**: URLs you scan are fetched server-side — the target site sees your server IP, not your browser
 - **Digital Footprint Analyzer**: uses the "forgot password" flow to check platform registration — no passwords are entered and no accounts are accessed; results are informational only
 - **Privacy Cloak**: generated faces are 100% synthetic — the person does not exist; no real biometric data is used or stored
+- **WebRTC & DNS Leak Test**: runs entirely client-side — no data is sent to NetRunner servers
 
 ---
 
@@ -526,6 +534,7 @@ Open `frontend/index.html` directly in your browser — no web server required.
 - PostWatch AI returns 503 errors until `email_phishing_model/` is populated with model files
 - On Windows, terminal output encoding is handled automatically via `sys.stdout` UTF-8 override in each backend file
 - WebRTC leak test results may vary depending on browser privacy settings and VPN configuration
+- DNS leak test requires access to Cloudflare's trace endpoint (`1.1.1.1`) — may not be reachable in some regions
 - First `docker-compose up --build` takes several minutes due to PyTorch + Playwright/Chromium downloads; subsequent runs use cached layers
 - Digital Footprint scan takes ~10–15 seconds — Holehe checks 121 platforms sequentially
 

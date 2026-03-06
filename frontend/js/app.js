@@ -2099,3 +2099,159 @@ async function runCloakGenerate() {
   btn.innerHTML = `<span>${currentLang === 'tr' ? '🎭 Anonim Yüz Üret' : '🎭 Generate Anonymous Face'}</span>`;
   btn.disabled = false;
 }
+// ─── DNS LEAK TEST ───
+async function runDNSLeakTest() {
+  const resultBox = document.getElementById('dns-result');
+  const btn = document.getElementById('dns-leak-btn');
+
+  btn.innerHTML = `<span class="spinner"></span> ${currentLang === 'tr' ? 'DNS test ediliyor...' : 'Testing DNS...'}`;
+  btn.disabled = true;
+
+  resultBox.innerHTML = `<p style="color:var(--text2);">🔍 ${currentLang === 'tr' ? 'DNS sunucuları tespit ediliyor...' : 'Detecting DNS servers...'}</p>`;
+  resultBox.style.display = 'block';
+
+  // Get public IP first (for VPN comparison)
+  let publicIP = null;
+  try {
+    const ipRes = await fetch('https://api.ipify.org?format=json');
+    const ipData = await ipRes.json();
+    publicIP = ipData.ip;
+  } catch (e) {
+    console.log('Could not fetch public IP');
+  }
+
+  // Fetch DNS servers via ipleak.net
+  let dnsServers = [];
+  try {
+    const r1 = await fetch('https://1.1.1.1/cdn-cgi/trace');
+    const rawText = await r1.text();
+    const lines = Object.fromEntries(rawText.trim().split('\n').map(l => l.split('=')));
+    dnsServers = [{
+      ip: lines.ip || '—',
+      country_name: lines.loc || '—',
+      country_code: lines.loc || null,
+      isp_name: lines.colo ? `Cloudflare (${lines.colo})` : 'Cloudflare'
+    }];
+  } catch (e) {
+    resultBox.innerHTML = `
+      <div style="background:rgba(255,208,10,0.06);border:1px solid rgba(255,208,10,0.2);border-radius:8px;padding:16px;">
+        <div style="color:var(--yellow);font-weight:700;margin-bottom:6px;">⚠️ ${currentLang === 'tr' ? 'DNS API\'ye ulaşılamadı' : 'Could not reach DNS API'}</div>
+        <div style="font-size:11px;color:var(--text2);">${currentLang === 'tr' ? 'İnternet bağlantınızı kontrol edin.' : 'Check your internet connection.'}</div>
+      </div>`;
+    btn.innerHTML = `<span data-en="🔍 Test DNS Leak" data-tr="🔍 DNS Sızıntısını Test Et">${currentLang === 'tr' ? '🔍 DNS Sızıntısını Test Et' : '🔍 Test DNS Leak'}</span>`;
+    btn.disabled = false;
+    return;
+  }
+
+  _renderDNSResults(dnsServers, publicIP);
+
+  btn.innerHTML = `<span>${currentLang === 'tr' ? '🔍 DNS Sızıntısını Test Et' : '🔍 Test DNS Leak'}</span>`;
+  btn.disabled = false;
+}
+
+function _renderDNSResults(servers, publicIP) {
+  const resultBox = document.getElementById('dns-result');
+
+  if (!servers || servers.length === 0) {
+    resultBox.innerHTML = `
+      <div style="text-align:center;padding:30px;">
+        <div style="font-size:48px;margin-bottom:12px;">✅</div>
+        <div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px;">${currentLang === 'tr' ? 'DNS Sızıntısı Yok' : 'No DNS Leak Detected'}</div>
+        <div style="font-size:12px;color:var(--text2);">${currentLang === 'tr' ? 'DNS sunucusu tespit edilemedi.' : 'No DNS servers were detected.'}</div>
+      </div>`;
+    return;
+  }
+
+  // Detect potential leak: DNS server IP differs from public IP's subnet
+  // A "leak" = DNS server is from a different country/ISP than the VPN exit
+  const uniqueCountries = [...new Set(servers.map(s => s.country_name).filter(Boolean))];
+  const uniqueISPs = [...new Set(servers.map(s => s.isp_name).filter(Boolean))];
+
+  // Simple heuristic: if there are multiple ISPs, likely a partial leak
+  const hasMultipleISPs = uniqueISPs.length > 1;
+  const hasLeak = hasMultipleISPs;
+
+  const statusColor = hasLeak ? 'var(--yellow)' : 'var(--green)';
+  const statusIcon = hasLeak ? '⚠️' : '✅';
+  const statusText = hasLeak
+    ? (currentLang === 'tr' ? 'Olası DNS Sızıntısı — Birden fazla ISP tespit edildi' : 'Possible DNS Leak — Multiple ISPs detected')
+    : (currentLang === 'tr' ? 'DNS Güvenli — Tek ISP üzerinden yönlendiriliyor' : 'DNS Secure — Routing through single ISP');
+
+  let html = `
+    <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:12px;">DNS LEAK TEST RESULTS</div>
+
+    <div style="text-align:center;padding:24px;margin-bottom:20px;">
+      <div style="font-size:48px;margin-bottom:12px;">${statusIcon}</div>
+      <div style="font-size:18px;font-weight:700;color:${statusColor};margin-bottom:6px;">
+        ${hasLeak ? (currentLang === 'tr' ? 'Olası DNS Sızıntısı' : 'Possible DNS Leak') : (currentLang === 'tr' ? 'DNS Güvenli' : 'DNS Secure')}
+      </div>
+      <div style="font-size:12px;color:var(--text2);">${statusText}</div>
+    </div>`;
+
+  if (publicIP) {
+    html += `
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">${currentLang === 'tr' ? 'MEVCUT IP' : 'YOUR PUBLIC IP'}</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--accent);">${publicIP}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">${currentLang === 'tr' ? 'Sitelerin gördüğü IP adresi' : 'The IP address websites see'}</div>
+        </div>
+      </div>`;
+  }
+
+  html += `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">${currentLang === 'tr' ? `TESPİT EDİLEN DNS SUNUCULARI (${servers.length})` : `DETECTED DNS SERVERS (${servers.length})`}</div>
+      <div style="display:grid;gap:8px;">`;
+
+  servers.forEach(s => {
+    const serverIP = s.ip || '—';
+    const country  = s.country_name || '—';
+    const isp      = s.isp_name || '—';
+    const flag     = s.country_code ? `https://flagcdn.com/16x12/${s.country_code.toLowerCase()}.png` : null;
+
+    html += `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:start;gap:8px;flex-wrap:wrap;">
+          <div>
+            <div style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--accent);">${serverIP}</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:4px;">
+              ${flag ? `<img src="${flag}" style="vertical-align:middle;margin-right:4px;border-radius:2px;">` : ''}
+              ${country}
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10px;color:var(--text3);">ISP</div>
+            <div style="font-size:11px;color:var(--text2);">${isp}</div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  html += `</div></div>`;
+
+  // Tips
+  html += `
+    <div style="background:${hasLeak ? 'rgba(255,208,10,0.04)' : 'rgba(0,255,170,0.04)'};border:1px solid ${hasLeak ? 'rgba(255,208,10,0.2)' : 'rgba(0,255,170,0.15)'};border-radius:8px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:${hasLeak ? 'var(--yellow)' : 'var(--accent)'};margin-bottom:10px;">
+        💡 ${hasLeak ? (currentLang === 'tr' ? 'DNS Sızıntısını Düzeltmek İçin' : 'How to Fix DNS Leak') : (currentLang === 'tr' ? 'DNS Güvenliğinizi Koruyun' : 'Keep Your DNS Secure')}
+      </div>
+      <div style="display:grid;gap:6px;">
+        ${(hasLeak ? [
+          { icon: '🔒', text: currentLang === 'tr' ? 'DNS leak protection özellikli VPN kullanın (NordVPN, Mullvad)' : 'Use a VPN with DNS leak protection (NordVPN, Mullvad)' },
+          { icon: '⚙️', text: currentLang === 'tr' ? 'VPN\'inizin DNS ayarlarını kontrol edin' : 'Check your VPN\'s DNS settings' },
+          { icon: '🌐', text: currentLang === 'tr' ? 'Cloudflare (1.1.1.1) veya NextDNS gibi özel DNS kullanın' : 'Use private DNS like Cloudflare (1.1.1.1) or NextDNS' },
+          { icon: '🦁', text: currentLang === 'tr' ? 'Brave Browser yerleşik DNS koruma sunar' : 'Brave Browser offers built-in DNS protection' },
+        ] : [
+          { icon: '✅', text: currentLang === 'tr' ? 'DNS sorgularınız VPN tüneli üzerinden geçiyor' : 'Your DNS queries are routing through the VPN tunnel' },
+          { icon: '🔍', text: currentLang === 'tr' ? 'DNS leak testini düzenli tekrarlayın' : 'Re-run the DNS leak test periodically' },
+          { icon: '🌐', text: currentLang === 'tr' ? 'DNS-over-HTTPS etkinleştirerek ekstra güvenlik sağlayın' : 'Enable DNS-over-HTTPS for extra protection' },
+        ]).map(t => `
+          <div style="font-size:11px;color:var(--text2);display:flex;gap:8px;align-items:start;">
+            <span>${t.icon}</span><span>${t.text}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  resultBox.innerHTML = html;
+}

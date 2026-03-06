@@ -107,7 +107,7 @@
   <div class="section">
     <div class="stats-row reveal">
       <div class="stat-item">
-        <span class="stat-num" data-target="10">0</span>
+        <span class="stat-num" data-target="11">0</span>
         <div class="stat-lbl" data-en="PRIVACY TOOLS" data-tr="GİZLİLİK ARACI">PRIVACY TOOLS</div>
       </div>
       <div class="stat-item">
@@ -124,7 +124,7 @@
   <!-- Tools Section -->
   <div class="section" style="padding-top:0;">
     <p class="section-label reveal-left" data-en="// TOOLS" data-tr="// ARAÇLAR">// TOOLS</p>
-    <h2 class="section-title reveal-left" data-en="Ten tools. One runner." data-tr="On araç. Tek runner.">Ten tools. One runner.</h2>
+    <h2 class="section-title reveal-left" data-en="Eleven tools. One runner." data-tr="11 araç. Tek runner.">Eleven tools. One runner.</h2>
     <p class="section-desc reveal-left" data-en="Each module is independently powerful. Together, they form a complete privacy layer for your digital life." data-tr="Her modül kendi başına güçlüdür. Birlikte, dijital yaşamın için eksiksiz bir gizlilik katmanı oluştururlar.">
       Each module is independently powerful. Together, they form a complete privacy layer for your digital life.
     </p>
@@ -173,7 +173,7 @@
 </div>
      <div class="tool-card reveal" onclick="openTool('webrtc')">
         <div class="tool-icon">🌐</div>
-        <div class="tool-name">WebRTC Leak Test</div>
+        <div class="tool-name">Leak Test</div>
         <div class="tool-desc">Check if your VPN is leaking your real IP address through WebRTC browser vulnerabilities.</div>
         <span class="tag">VPN Security</span>
       </div>
@@ -281,7 +281,7 @@
 </div>
           <div class="sidebar-item" onclick="openTool('webrtc')">
   <span class="sidebar-icon">🌐</span>
-  <span data-en="WebRTC Leak Test" data-tr="WebRTC Test">WebRTC Leak Test</span>
+  <span data-en="Leak Test" data-tr="Leak Test">Leak Test</span>
 </div>
         <div class="sidebar-item" onclick="openTool('breach')" id="sb-breach">
           <span class="sidebar-icon">🔴</span>
@@ -623,29 +623,47 @@
     </div>
   </div>  
 </div>
-            <!-- ══ WEBRTC LEAK TEST ══ -->
+           <!-- ══ WEBRTC LEAK TEST ══ -->
 <div class="tool-panel" id="webrtc-tool">
   <div class="panel-header">
-    <div class="panel-title">🌐 <span data-en="WebRTC Leak Test" data-tr="WebRTC Sızıntı Testi">WebRTC Leak Test</span></div>
-    <div class="panel-desc" data-en="Check if your VPN is leaking your real IP address through WebRTC. Even with VPN enabled, browsers can expose your local IP via WebRTC connections." data-tr="VPN'iniz WebRTC üzerinden gerçek IP adresinizi sızdırıyor mu kontrol edin.">Check if your VPN is leaking your real IP address through WebRTC. Even with VPN enabled, browsers can expose your local IP via WebRTC connections.</div>
+    <div class="panel-title">🌐 <span data-en="WebRTC & DNS Leak Test" data-tr="WebRTC & DNS Sızıntı Testi">WebRTC & DNS Leak Test</span></div>
+    <div class="panel-desc" data-en="Check if your VPN is leaking your real IP address through WebRTC or DNS queries. Even with VPN enabled, browsers can expose your real identity." data-tr="VPN'iniz WebRTC veya DNS sorguları üzerinden gerçek IP adresinizi sızdırıyor mu kontrol edin.">Check if your VPN is leaking your real IP address through WebRTC or DNS queries. Even with VPN enabled, browsers can expose your real identity.</div>
   </div>
 
   <div style="background: rgba(0, 255, 170, 0.04); border: 1px solid rgba(0, 255, 170, 0.15); border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-    <div style="font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 6px;">ℹ️ What is WebRTC Leak?</div>
-    <div style="font-size: 11px; color: var(--text2); line-height: 1.6;">
-      WebRTC (Web Real-Time Communication) is used by browsers for voice/video calls. However, it can expose your real local IP address even when using a VPN, potentially revealing your true location.
+    <div style="font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 10px;">ℹ️ <span data-en="Two Types of VPN Leaks" data-tr="İki Tür VPN Sızıntısı">Two Types of VPN Leaks</span></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div style="font-size: 11px; color: var(--text2); line-height: 1.6;">
+        <strong style="color: var(--text);">🌐 WebRTC Leak</strong><br>
+        <span data-en="Browser exposes your real local IP through peer-to-peer connections, bypassing VPN." data-tr="Tarayıcı, VPN'i atlayarak P2P bağlantıları üzerinden gerçek IP'nizi ifşa eder.">Browser exposes your real local IP through peer-to-peer connections, bypassing VPN.</span>
+      </div>
+      <div style="font-size: 11px; color: var(--text2); line-height: 1.6;">
+        <strong style="color: var(--text);">🔍 DNS Leak</strong><br>
+        <span data-en="DNS queries route through your ISP instead of the VPN tunnel, revealing browsing habits." data-tr="DNS sorguları VPN tüneli yerine ISP üzerinden geçerek gezinme alışkanlıklarınızı ifşa eder.">DNS queries route through your ISP instead of the VPN tunnel, revealing browsing habits.</span>
+      </div>
     </div>
   </div>
 
-  <button class="btn btn-primary" onclick="runWebRTCTest()">
-    <span data-en="🔍 Test for WebRTC Leaks" data-tr="🔍 WebRTC Sızıntısını Test Et">🔍 Test for WebRTC Leaks</span>
-  </button>
+  <!-- TWO SEPARATE BUTTONS -->
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 0;">
+    <button class="btn btn-primary" onclick="runWebRTCTest()" style="flex: 1; min-width: 180px;">
+      <span data-en="🌐 Test WebRTC Leak" data-tr="🌐 WebRTC Sızıntısını Test Et">🌐 Test WebRTC Leak</span>
+    </button>
+    <button class="btn btn-secondary" onclick="runDNSLeakTest()" id="dns-leak-btn" style="flex: 1; min-width: 180px;">
+      <span data-en="🔍 Test DNS Leak" data-tr="🔍 DNS Sızıntısını Test Et">🔍 Test DNS Leak</span>
+    </button>
+  </div>
 
+  <!-- WEBRTC RESULT -->
   <div class="result-box" id="webrtc-result" style="margin-top: 24px;">
     <!-- Results will appear here -->
   </div>
-</div>
 
+  <!-- DNS LEAK RESULT -->
+  <div class="result-box" id="dns-result" style="margin-top: 16px;">
+    <!-- Results will appear here -->
+  </div>
+</div>
       <!-- ══ EMAIL BREACH CHECKER ══ -->
      
       <div class="tool-panel" id="breach-tool">
