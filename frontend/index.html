@@ -107,7 +107,7 @@
   <div class="section">
     <div class="stats-row reveal">
       <div class="stat-item">
-        <span class="stat-num" data-target="11">0</span>
+        <span class="stat-num" data-target="12">0</span>
         <div class="stat-lbl" data-en="PRIVACY TOOLS" data-tr="GİZLİLİK ARACI">PRIVACY TOOLS</div>
       </div>
       <div class="stat-item">
@@ -124,7 +124,7 @@
   <!-- Tools Section -->
   <div class="section" style="padding-top:0;">
     <p class="section-label reveal-left" data-en="// TOOLS" data-tr="// ARAÇLAR">// TOOLS</p>
-    <h2 class="section-title reveal-left" data-en="Eleven tools. One runner." data-tr="11 araç. Tek runner.">Eleven tools. One runner.</h2>
+    <h2 class="section-title reveal-left" data-en="Twelve tools. One runner." data-tr="12 araç. Tek runner.">Twelve tools. One runner.</h2>
     <p class="section-desc reveal-left" data-en="Each module is independently powerful. Together, they form a complete privacy layer for your digital life." data-tr="Her modül kendi başına güçlüdür. Birlikte, dijital yaşamın için eksiksiz bir gizlilik katmanı oluştururlar.">
       Each module is independently powerful. Together, they form a complete privacy layer for your digital life.
     </p>
@@ -212,8 +212,20 @@
     Generate an AI face that doesn't exist. Bypass identity verification systems without revealing your real face.
   </div>
   <span class="tag">StyleGAN2</span>
+</div>  
+  
+<div class="tool-card reveal" onclick="openTool('shadow')">
+  <div class="tool-icon">👁️</div>
+  <div class="tool-name" data-en="Digital Shadow" data-tr="Dijital Gölge">Digital Shadow</div>
+  <div class="tool-desc" data-en="Map what platforms know about you. Select the services you use and get a full data exposure breakdown — then generate a camouflage strategy." data-tr="Platformların hakkınızda ne bildiğini haritalayın. Kullandığınız servisleri seçin, veri maruziyetinizi görün.">
+    Map what platforms know about you. Select the services you use and get a full data exposure breakdown — then generate a camouflage strategy.
+  </div>
+  <span class="tag">22 Platforms</span>
 </div>
-     
+      
+        
+
+
     </div>
   </div>
 
@@ -304,6 +316,12 @@
   <span class="sidebar-icon">🎭</span>
   <span data-en="Privacy Cloak" data-tr="Gizlilik Maskesi">Privacy Cloak</span>
 </div>
+       <div class="sidebar-item" onclick="openTool('shadow')">
+  <span class="sidebar-icon">👁️</span>
+  <span data-en="Digital Shadow" data-tr="Dijital Gölge">Digital Shadow</span>
+</div>  
+</div>
+    
 
       <div class="sidebar-section">
         <div class="sidebar-label" data-en="SESSION" data-tr="OTURUM">SESSION</div>
@@ -794,6 +812,9 @@
   </div>
 </div>
 <!-- /footprint-tool -->
+
+
+
  <div class="tool-panel" id="cloak-tool">
   <div class="panel-header">
     <div class="panel-title">🎭 <span data-en="Privacy Cloak" data-tr="Gizlilik Maskesi">Privacy Cloak</span></div>
@@ -816,8 +837,9 @@
   </div>
 
   <!-- TABS -->
-  <div class="tabs" style="margin-bottom:24px;">
+   <div class="tabs" style="margin-bottom:24px;">
     <button class="tab active" onclick="setCloakTab('generate')" id="ctab-generate" data-en="Generate Face" data-tr="Yüz Üret">Generate Face</button>
+    <button class="tab" onclick="setCloakTab('identity')" id="ctab-identity" data-en="Fake Identity" data-tr="Sahte Kimlik">Fake Identity</button>
   </div>
 
    <!-- ── GENERATE TAB ── -->
@@ -850,6 +872,27 @@
     </div>
   </div>
 </div>
+<!-- ── IDENTITY TAB ── -->
+<div id="cloak-identity" style="display:none;">
+  <div style="background:rgba(131,56,236,0.06);border:1px solid rgba(131,56,236,0.2);border-radius:8px;padding:16px;margin-bottom:24px;">
+    <div style="font-size:11px;color:var(--cyber2);font-weight:700;margin-bottom:6px;">🪪 SYNTHETIC IDENTITY ENGINE</div>
+    <div style="font-size:11px;color:var(--text2);line-height:1.6;" data-en="Generate a complete fake identity for signups that don't need your real info. Name, address, email, phone — all plausible, none real." data-tr="Gerçek bilgilerinizi gerektirmeyen kayıtlar için sahte kimlik üretin.">
+      Generate a complete fake identity for signups that don't need your real info. Name, address, email, phone — all plausible, none real.
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="generateIdentity()">
+    <span data-en="🪪 Generate Fake Identity" data-tr="🪪 Sahte Kimlik Üret">🪪 Generate Fake Identity</span>
+  </button>
+
+  <div class="result-box" id="identity-result" style="margin-top:24px;">
+    <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:16px;">GENERATED IDENTITY</div>
+    <div id="identity-fields" style="display:grid;gap:8px;"></div>
+    <button id="identity-copy-all" class="btn btn-secondary" style="margin-top:16px;width:100%;">
+      <span data-en="⎘ Copy All Fields" data-tr="⎘ Tümünü Kopyala">⎘ Copy All Fields</span>
+    </button>
+  </div>
+</div>
 
 <!-- Privacy Note -->
 <div style="margin-top:20px;padding:12px 16px;background:rgba(0,0,0,0.2);border-radius:6px;border-left:2px solid rgba(0,255,170,0.2);">
@@ -862,6 +905,155 @@
 </div>
 </div>
 <!-- /cloak-tool -->
+
+    <!-- ══ DIGITAL SHADOW ══ -->
+
+<div class="tool-panel" id="shadow-tool">
+  <div class="panel-header">
+    <div class="panel-title">👁️ <span data-en="Digital Shadow" data-tr="Dijital Gölge">Digital Shadow</span></div>
+    <div class="panel-desc" data-en="Select the platforms you use — see exactly what they collectively know about you. Then generate a personalized camouflage strategy to reduce your digital footprint." data-tr="Kullandığın platformları seç — hepsinin senden ne öğrendiğini gör. Sonra dijital izini azaltmak için kişisel kamuflaj stratejisi üret.">
+      Select the platforms you use — see exactly what they collectively know about you. Then generate a personalized camouflage strategy to reduce your digital footprint.
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="setShadowTab('whoknows')" id="stab-whoknows" data-en="👁️ Who Knows What" data-tr="👁️ Kim Ne Biliyor">👁️ Who Knows What</button>
+    <button class="tab" onclick="setShadowTab('noise')" id="stab-noise" data-en="🌫️ Noise Profile" data-tr="🌫️ Gürültü Profili">🌫️ Noise Profile</button>
+  </div>
+
+  <!-- ── WHO KNOWS WHAT TAB ── -->
+  <div id="shadow-whoknows">
+    <div style="display:grid;grid-template-columns:5fr 7fr;gap:24px;align-items:start;">
+
+      <!-- LEFT: Platform Selection -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:12px;color:var(--text2);">
+            <span data-en="Select platforms you use:" data-tr="Kullandığın platformları seç:">Select platforms you use:</span>
+            <strong style="color:var(--accent);margin-left:6px;" id="shadow-selected-count">0</strong>
+            <span style="color:var(--text3);"> selected</span>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary btn-sm" onclick="selectAllShadowPlatforms()" data-en="Select All" data-tr="Tümünü Seç">Select All</button>
+            <button class="btn btn-secondary btn-sm" onclick="clearAllShadowPlatforms()" data-en="Clear" data-tr="Temizle">Clear</button>
+          </div>
+        </div>
+
+        <!-- LEGEND -->
+        <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+          <span style="font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;"></span> Critical risk</span>
+          <span style="font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--yellow);display:inline-block;"></span> High risk</span>
+          <span style="font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;"></span> Medium risk</span>
+        </div>
+
+        <!-- PLATFORM GRID -->
+        <div id="shadow-platform-grid" style="margin-bottom:16px;"></div>
+
+        <button class="btn btn-primary" style="width:100%;" onclick="runWhoKnowsWhat()" id="whoknows-btn">
+          <span data-en="👁️ Reveal My Data Profile" data-tr="👁️ Veri Profilimi Göster">👁️ Reveal My Data Profile</span>
+        </button>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div>
+        <div style="font-size:10px;color:var(--text3);letter-spacing:2px;font-weight:700;margin-bottom:12px;font-family:var(--font-mono);">DATA EXPOSURE REPORT</div>
+        <div class="result-box" id="shadow-whoknows-result-box" style="min-height:300px;">
+          <div id="shadow-whoknows-result">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:260px;gap:12px;opacity:0.35;">
+              <div style="font-size:48px;">👁️</div>
+              <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);letter-spacing:1px;">SELECT PLATFORMS & REVEAL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── NOISE PROFILE TAB ── -->
+  <div id="shadow-noise" style="display:none;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+
+      <!-- LEFT: Inputs -->
+      <div>
+        <div style="background:rgba(131,56,236,0.06);border:1px solid rgba(131,56,236,0.2);border-radius:8px;padding:14px;margin-bottom:20px;">
+          <div style="font-size:11px;color:var(--cyber2);font-weight:700;margin-bottom:6px;">🌫️ CAMOUFLAGE STRATEGY ENGINE</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.6;" data-en="Answer a few questions. Get a personalized strategy to become harder to track, profile, and target." data-tr="Birkaç soruyu yanıtla. İzlenmeni, profilini ve hedeflenmeni zorlaştıracak kişisel strateji al.">
+            Answer a few questions. Get a personalized strategy to become harder to track, profile, and target.
+          </div>
+        </div>
+
+        <!-- ACTIVITY LEVEL -->
+        <div class="input-group">
+          <label class="input-label" data-en="ONLINE ACTIVITY LEVEL" data-tr="ÇEVRIMIÇI AKTİVİTE SEVİYESİ">ONLINE ACTIVITY LEVEL</label>
+          <select class="input" id="noise-activity" style="cursor:pointer;">
+            <option value="low" data-en="Low — I rarely post or share online" data-tr="Düşük — Nadiren paylaşım yapıyorum">Low — I rarely post or share online</option>
+            <option value="medium" selected data-en="Medium — Regular social media user" data-tr="Orta — Düzenli sosyal medya kullanıcısı">Medium — Regular social media user</option>
+            <option value="high" data-en="High — I'm very active across multiple platforms" data-tr="Yüksek — Birden fazla platformda çok aktifim">High — I'm very active across multiple platforms</option>
+          </select>
+        </div>
+
+        <!-- PLATFORM COUNT -->
+        <div class="input-group">
+          <label class="input-label" data-en="HOW MANY PLATFORMS DO YOU USE?" data-tr="KAÇ PLATFORM KULLANIYORSUN?">HOW MANY PLATFORMS DO YOU USE?</label>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <input type="range" min="1" max="30" value="8" id="noise-platform-count"
+                   oninput="document.getElementById('noise-platform-val').textContent=this.value"
+                   style="flex:1;">
+            <span id="noise-platform-val" style="font-size:16px;font-weight:700;color:var(--accent);min-width:30px;">8</span>
+          </div>
+        </div>
+
+        <!-- CONCERNS -->
+        <div class="input-group">
+          <label class="input-label" data-en="WHAT ARE YOU MOST CONCERNED ABOUT?" data-tr="EN ÇOK NE HAKKINDA ENDİŞELENİYORSUN?">WHAT ARE YOU MOST CONCERNED ABOUT?</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--text2);">
+              <input type="checkbox" class="noise-concern" value="tracking" checked> 🌐 Online Tracking
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--text2);">
+              <input type="checkbox" class="noise-concern" value="identity" checked> 🪪 Identity Exposure
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--text2);">
+              <input type="checkbox" class="noise-concern" value="financial"> 💳 Financial Data
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--text2);">
+              <input type="checkbox" class="noise-concern" value="location"> 📍 Location Privacy
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--text2);">
+              <input type="checkbox" class="noise-concern" value="social"> 👥 Social Graph
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;color:var(--text2);">
+              <input type="checkbox" class="noise-concern" value="devices"> 💻 Device Fingerprint
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;" onclick="runNoiseProfile()">
+          <span data-en="🌫️ Generate Camouflage Strategy" data-tr="🌫️ Kamuflaj Stratejisi Üret">🌫️ Generate Camouflage Strategy</span>
+        </button>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div>
+        <div style="font-size:10px;color:var(--text3);letter-spacing:2px;font-weight:700;margin-bottom:12px;font-family:var(--font-mono);">CAMOUFLAGE STRATEGIES</div>
+        <div class="result-box" id="shadow-noise-result-box" style="min-height:300px;">
+          <div id="shadow-noise-result">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:260px;gap:12px;opacity:0.35;">
+              <div style="font-size:48px;">🌫️</div>
+              <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);letter-spacing:1px;">CONFIGURE & GENERATE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- /shadow-tool -->
+
+       
 
     </main>
   </div>

@@ -138,6 +138,7 @@ function openTool(toolName) {
     'tracker': 'tracker-tool',
     'footprint': 'footprint-tool',
     'cloak': 'cloak-tool',
+    'shadow': 'shadow-tool',
   };
   
   const panelId = toolMap[toolName];
@@ -1048,8 +1049,7 @@ function copyResult(id) {
 // ══════════════════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════════════════
-generatePassword();
-
+generatePassword(); 
 // ══════════════════════════════════════════════════════════════════════════
 // BROWSER FINGERPRINT ANALYZER
 // ══════════════════════════════════════════════════════════════════════════
@@ -1588,11 +1588,6 @@ document.querySelectorAll('input[type="file"]').forEach(input => {
   });
 });
 // ══════════════════════════════════════════════════════════════════════════
-// 1. openTool() FONKSİYONUNDAKİ toolMap'E EKLE:
-//    'tracker': 'tracker-tool',
-// ══════════════════════════════════════════════════════════════════════════
-
-// ══════════════════════════════════════════════════════════════════════════
 // COOKIE & TRACKER ANALYZER
 // ══════════════════════════════════════════════════════════════════════════
 
@@ -1990,8 +1985,11 @@ let cloakImageData = null; // Generated image base64 stored for download
 // ── TAB SWITCH ── 
 function setCloakTab(tab) {
   document.getElementById('ctab-generate').classList.toggle('active', tab === 'generate');
+  document.getElementById('ctab-identity').classList.toggle('active', tab === 'identity');
   document.getElementById('cloak-generate').style.display = tab === 'generate' ? 'block' : 'none';
+  document.getElementById('cloak-identity').style.display = tab === 'identity' ? 'block' : 'none';
   document.getElementById('cloak-result').classList.remove('show');
+  document.getElementById('identity-result').classList.remove('show');
 }
 
 
@@ -2255,3 +2253,605 @@ function _renderDNSResults(servers, publicIP) {
 
   resultBox.innerHTML = html;
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+// FAKE IDENTITY GENERATOR
+// ══════════════════════════════════════════════════════════════════════════
+
+const IDENTITY_DATA = {
+  en: {
+    first: ['James','Oliver','William','Ethan','Lucas','Noah','Mason','Liam','Henry','Jack','Emma','Sophia','Olivia','Ava','Isabella','Mia','Charlotte','Amelia','Harper','Evelyn'],
+    last:  ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Wilson','Taylor','Anderson','Thomas','Jackson','White','Harris','Martin','Thompson','Moore','Allen','Young'],
+    streets: ['Maple St','Oak Ave','Cedar Rd','Elm St','Pine Ave','Birch Ln','Walnut Dr','Sunset Blvd','River Rd','Hillside Ave'],
+    cities: [
+      {city:'New York',state:'NY',zip:'10001'},
+      {city:'Los Angeles',state:'CA',zip:'90001'},
+      {city:'Chicago',state:'IL',zip:'60601'},
+      {city:'Houston',state:'TX',zip:'77001'},
+      {city:'Phoenix',state:'AZ',zip:'85001'},
+      {city:'Philadelphia',state:'PA',zip:'19101'},
+      {city:'San Antonio',state:'TX',zip:'78201'},
+      {city:'San Diego',state:'CA',zip:'92101'},
+    ],
+    phonePfx: ['+1 (212)','+ 1 (310)','+1 (312)','+1 (415)','+1 (713)'],
+  },
+  tr: {
+    first: ['Ahmet','Mehmet','Ali','Mustafa','Ömer','İbrahim','Hüseyin','Hasan','Yusuf','Can','Ayşe','Fatma','Zeynep','Elif','Merve','Selin','Büşra','Ceren','Esra','Derya'],
+    last:  ['Yılmaz','Kaya','Demir','Şahin','Çelik','Yıldız','Yıldırım','Öztürk','Arslan','Doğan','Kılıç','Aslan','Çetin','Koç','Kurt','Aydın','Güneş','Polat','Erdoğan','Özdemir'],
+    streets: ['Atatürk Cad.','Cumhuriyet Sok.','İstiklal Cad.','Bağlar Mah.','Yeni Mah.','Çiçek Sok.','Gül Cad.','Lale Sok.','Bahçe Cad.','Çınar Sok.'],
+    cities: [
+      {city:'İstanbul',state:'İST',zip:'34000'},
+      {city:'Ankara',state:'ANK',zip:'06000'},
+      {city:'İzmir',state:'İZM',zip:'35000'},
+      {city:'Bursa',state:'BRS',zip:'16000'},
+      {city:'Antalya',state:'ANT',zip:'07000'},
+      {city:'Adana',state:'ADA',zip:'01000'},
+      {city:'Konya',state:'KNY',zip:'42000'},
+      {city:'Gaziantep',state:'GZP',zip:'27000'},
+    ],
+    phonePfx: ['+90 (212)','+90 (312)','+90 (232)','+90 (224)','+90 (242)'],
+  }
+};
+
+function _rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function _rndInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function generateIdentity(returnData = false) { 
+  const locale = currentLang === 'tr' ? 'tr' : 'en';
+  const d = IDENTITY_DATA[locale];
+
+  const first = _rnd(d.first);
+  const last  = _rnd(d.last);
+  const loc   = _rnd(d.cities);
+
+  // Username
+  const userVariants = [
+    `${first.toLowerCase()}${last.toLowerCase()}${_rndInt(10,99)}`,
+    `${first.toLowerCase()}_${last.toLowerCase()}`,
+    `${last.toLowerCase()}${_rndInt(100,999)}`,
+    `${first.toLowerCase()}${_rndInt(1000,9999)}`,
+  ];
+  const username = _rnd(userVariants).replace(/[^a-z0-9_]/g, '');
+
+  // Email
+  const domains = ['gmail.com','yahoo.com','outlook.com','proton.me','icloud.com'];
+  const email = `${username}@${_rnd(domains)}`;
+
+  // DOB
+  const year  = _rndInt(1970, 2000);
+  const month = _rndInt(1, 12);
+  const day   = _rndInt(1, 28);
+  const age   = new Date().getFullYear() - year;
+  const dob   = `${String(day).padStart(2,'0')}/${String(month).padStart(2,'0')}/${year}`;
+
+  // Address
+  const streetNum = _rndInt(1, 999);
+  const street    = _rnd(d.streets);
+  const zipOffset = _rndInt(0, 99);
+  const zip       = String(parseInt(loc.zip) + zipOffset).padStart(5, '0');
+
+  // Phone
+  const pfx   = _rnd(d.phonePfx);
+  const phone = `${pfx} ${_rndInt(100,999)}-${_rndInt(1000,9999)}`;
+
+  // Password
+  const pwChars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*';
+  const arr = new Uint32Array(16);
+  crypto.getRandomValues(arr);
+  const password = Array.from(arr).map(v => pwChars[v % pwChars.length]).join('');
+
+  const identity = { first, last, username, email, dob, age, street: `${streetNum} ${street}`, city: loc.city, state: loc.state, zip, phone, password };
+if (returnData) return identity;
+  _renderIdentity(identity);
+}
+
+function _renderIdentity(id) {
+  const fields = currentLang === 'tr' ? [
+    { label: 'AD SOYAD',      value: `${id.first} ${id.last}`,  icon: '👤', key: 'fullname' },
+    { label: 'KULLANICI ADI', value: id.username,                icon: '🔖', key: 'username' },
+    { label: 'E-POSTA',       value: id.email,                   icon: '📧', key: 'email' },
+    { label: 'DOĞUM TARİHİ', value: `${id.dob} (${id.age} yaş)`,icon: '🎂', key: 'dob' },
+    { label: 'ADRES',         value: id.street,                  icon: '🏠', key: 'street' },
+    { label: 'ŞEHİR',         value: `${id.city}, ${id.zip}`,    icon: '🌆', key: 'city' },
+    { label: 'TELEFON',       value: id.phone,                   icon: '📱', key: 'phone' },
+    { label: 'ŞİFRE',         value: id.password,                icon: '🔐', key: 'password' },
+  ] : [
+    { label: 'FULL NAME',  value: `${id.first} ${id.last}`,      icon: '👤', key: 'fullname' },
+    { label: 'USERNAME',   value: id.username,                    icon: '🔖', key: 'username' },
+    { label: 'EMAIL',      value: id.email,                       icon: '📧', key: 'email' },
+    { label: 'DATE OF BIRTH', value: `${id.dob} (age ${id.age})`,icon: '🎂', key: 'dob' },
+    { label: 'ADDRESS',    value: id.street,                      icon: '🏠', key: 'street' },
+    { label: 'CITY',       value: `${id.city}, ${id.state} ${id.zip}`, icon: '🌆', key: 'city' },
+    { label: 'PHONE',      value: id.phone,                       icon: '📱', key: 'phone' },
+    { label: 'PASSWORD',   value: id.password,                    icon: '🔐', key: 'password' },
+  ];
+
+  const html = fields.map(f => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        <span style="font-size:18px;flex-shrink:0;">${f.icon}</span>
+        <div style="min-width:0;">
+          <div style="font-size:9px;color:var(--text3);letter-spacing:1px;margin-bottom:2px;">${f.label}</div>
+          <div id="id-${f.key}" style="font-size:12px;font-weight:700;color:var(--text);font-family:var(--font-mono);word-break:break-all;">${f.value}</div>
+        </div>
+      </div>
+      <button onclick="navigator.clipboard.writeText('${f.value.replace(/'/g,"\\'")}');this.textContent='✓';setTimeout(()=>this.textContent='⎘',1200);"
+              style="flex-shrink:0;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text3);font-size:11px;padding:4px 8px;cursor:pointer;">⎘</button>
+    </div>
+  `).join('');
+
+  document.getElementById('identity-fields').innerHTML = html;
+
+  // Copy all
+  const allText = fields.map(f => `${f.label}: ${f.value}`).join('\n');
+  document.getElementById('identity-copy-all').onclick = () => {
+    navigator.clipboard.writeText(allText);
+    const btn = document.getElementById('identity-copy-all');
+    const orig = btn.textContent;
+    btn.textContent = currentLang === 'tr' ? '✓ Kopyalandı!' : '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  };
+
+  document.getElementById('identity-result').classList.add('show');
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// DIGITAL SHADOW
+// ══════════════════════════════════════════════════════════════════════════
+
+const SHADOW_PLATFORMS = [
+  // Social
+  { id:'google',    name:'Google',     icon:'🔍', category:'search',   risk:'critical',
+    knows:['Real name','Email','Phone','Location history','Search history','Browsing habits','Device info','Voice recordings','Payment info','Contacts','Calendar','Photos','Documents'] },
+  { id:'facebook',  name:'Facebook',   icon:'👥', category:'social',   risk:'critical',
+    knows:['Real name','Email','Phone','Location','Friends network','Political views','Religious views','Relationship status','Browsing history','Ad preferences','Face recognition data','Purchase behavior'] },
+  { id:'instagram', name:'Instagram',  icon:'📸', category:'social',   risk:'high',
+    knows:['Real name','Email','Phone','Location tags','Photos','Face data','Interests','Device info','Browsing behavior','Shopping preferences'] },
+  { id:'tiktok',    name:'TikTok',     icon:'🎵', category:'social',   risk:'critical',
+    knows:['Real name','Email','Phone','Location','Face & voice biometrics','Viewing habits','Device clipboard','Wi-Fi networks','Keystroke patterns'] },
+  { id:'twitter',   name:'X (Twitter)',icon:'🐦', category:'social',   risk:'high',
+    knows:['Real name','Email','Phone','Location','Political views','Interests','DM content','Device info'] },
+  { id:'linkedin',  name:'LinkedIn',   icon:'💼', category:'professional', risk:'high',
+    knows:['Real name','Email','Phone','Work history','Education','Skills','Connections','Location','Career goals'] },
+  { id:'snapchat',  name:'Snapchat',   icon:'👻', category:'social',   risk:'high',
+    knows:['Real name','Email','Phone','Location (precise)','Friends','Face data','Device info'] },
+  // Shopping
+  { id:'amazon',    name:'Amazon',     icon:'📦', category:'shopping', risk:'critical',
+    knows:['Real name','Email','Phone','Home address','Payment info','Purchase history','Browsing history','Voice data (Alexa)','TV viewing (Fire)','Reading habits (Kindle)'] },
+  { id:'trendyol',  name:'Trendyol',   icon:'🛍️', category:'shopping', risk:'high',
+    knows:['Real name','Email','Phone','Home address','Payment info','Purchase history','Browsing behavior'] },
+  { id:'hepsiburada',name:'Hepsiburada',icon:'🛒',category:'shopping', risk:'high',
+    knows:['Real name','Email','Phone','Home address','Payment info','Purchase history'] },
+  // Finance
+  { id:'paypal',    name:'PayPal',     icon:'💳', category:'finance',  risk:'critical',
+    knows:['Real name','Email','Phone','Home address','Bank account','Card info','Transaction history','IP addresses','Device fingerprint'] },
+  { id:'stripe',    name:'Stripe',     icon:'💰', category:'finance',  risk:'high',
+    knows:['Real name','Email','Card info','Purchase history','Device fingerprint','IP address'] },
+  // Communication
+  { id:'whatsapp',  name:'WhatsApp',   icon:'💬', category:'messaging',risk:'high',
+    knows:['Phone number','Contacts','Location','Device info','Usage patterns','Profile photo','Status'] },
+  { id:'telegram',  name:'Telegram',   icon:'✈️', category:'messaging',risk:'medium',
+    knows:['Phone number','Contacts','IP address','Device info','Username'] },
+  { id:'gmail',     name:'Gmail',      icon:'📧', category:'email',    risk:'critical',
+    knows:['Email content','Contacts','Calendar','Location','Device info','Browsing context','Ad targeting data'] },
+  // Streaming
+  { id:'netflix',   name:'Netflix',    icon:'🎬', category:'streaming',risk:'medium',
+    knows:['Real name','Email','Payment info','Viewing history','Watch time','Device info','Location'] },
+  { id:'spotify',   name:'Spotify',    icon:'🎵', category:'streaming',risk:'medium',
+    knows:['Real name','Email','Listening history','Mood patterns','Location','Device info','Contacts (optional)'] },
+  { id:'youtube',   name:'YouTube',    icon:'▶️', category:'streaming',risk:'high',
+    knows:['Viewing history','Search history','Liked content','Location','Device info','Ad profile','Comments'] },
+  // Other
+  { id:'uber',      name:'Uber',       icon:'🚗', category:'transport',risk:'high',
+    knows:['Real name','Email','Phone','Home & work address','Trip history','Payment info','Location (real-time)','Driver ratings'] },
+  { id:'airbnb',    name:'Airbnb',     icon:'🏠', category:'travel',   risk:'high',
+    knows:['Real name','Email','Phone','Home address','ID document','Face photo','Travel history','Payment info'] },
+  { id:'apple',     name:'Apple',      icon:'🍎', category:'tech',     risk:'high',
+    knows:['Real name','Email','Phone','Device usage','App usage','Location','Payment info','Health data','Face ID data'] },
+  { id:'microsoft', name:'Microsoft',  icon:'🪟', category:'tech',     risk:'high',
+    knows:['Real name','Email','Device usage','Browsing (Edge)','Documents','Contacts','Calendar','Location'] },
+];
+
+const DATA_CATEGORIES = {
+  identity:  { label:'Identity',    color:'var(--red)',    icon:'👤', items:['Real name','Email','Phone','Home address','Date of birth','ID document','Face data','Face recognition data','Face & voice biometrics','Face photo'] },
+  financial: { label:'Financial',   color:'var(--yellow)', icon:'💰', items:['Payment info','Bank account','Card info','Transaction history','Purchase history','Purchase behavior','Shopping preferences'] },
+  location:  { label:'Location',    color:'var(--orange)', icon:'📍', items:['Location','Location history','Location (precise)','Location (real-time)','Home & work address','Wi-Fi networks','Trip history'] },
+  behavioral:{ label:'Behavioral',  color:'var(--cyber)',  icon:'🧠', items:['Search history','Browsing history','Browsing habits','Browsing behavior','Browsing context','Viewing history','Listening history','Watch time','Mood patterns','Ad preferences','Ad profile','Keystroke patterns','Usage patterns','App usage','Device usage'] },
+  biometric: { label:'Biometric',   color:'var(--cyber2)', icon:'🔬', items:['Voice recordings','Voice data (Alexa)','Face data','Face recognition data','Face & voice biometrics','Face ID data','Health data'] },
+  social:    { label:'Social Graph', color:'var(--accent)', icon:'🕸️', items:['Friends network','Contacts','Connections','Relationship status','Political views','Religious views','Career goals'] },
+};
+
+let shadowSelectedPlatforms = new Set();
+let shadowTab = 'whoknows';
+
+function setShadowTab(tab) {
+  shadowTab = tab;
+  document.getElementById('stab-whoknows').classList.toggle('active', tab === 'whoknows');
+  document.getElementById('stab-noise').classList.toggle('active', tab === 'noise');
+  document.getElementById('shadow-whoknows').style.display = tab === 'whoknows' ? 'block' : 'none';
+  document.getElementById('shadow-noise').style.display = tab === 'noise' ? 'block' : 'none';
+}
+
+function initShadowPlatforms() {
+  const categories = {
+    search: 'Search & Tech', social: 'Social Media', professional: 'Professional',
+    shopping: 'Shopping', finance: 'Finance', messaging: 'Messaging',
+    email: 'Email', streaming: 'Streaming', transport: 'Transport',
+    travel: 'Travel', tech: 'Devices & Tech'
+  };
+  const grouped = {};
+  SHADOW_PLATFORMS.forEach(p => {
+    if (!grouped[p.category]) grouped[p.category] = [];
+    grouped[p.category].push(p);
+  });
+
+  let html = '';
+  Object.entries(grouped).forEach(([cat, platforms]) => {
+    html += `<div style="margin-bottom:20px;">
+      <div style="font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:8px;">${categories[cat] || cat.toUpperCase()}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+    platforms.forEach(p => {
+      const riskColor = p.risk === 'critical' ? 'var(--red)' : p.risk === 'high' ? 'var(--yellow)' : 'var(--accent)';
+      html += `
+        <button id="sp-${p.id}" onclick="toggleShadowPlatform('${p.id}')"
+          style="display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:12px;color:var(--text2);">
+          <span>${p.icon}</span>
+          <span>${p.name}</span>
+          <span style="width:6px;height:6px;border-radius:50%;background:${riskColor};flex-shrink:0;"></span>
+        </button>`;
+    });
+    html += `</div></div>`;
+  });
+
+  document.getElementById('shadow-platform-grid').innerHTML = html;
+}
+
+function toggleShadowPlatform(id) {
+  const btn = document.getElementById(`sp-${id}`);
+  if (shadowSelectedPlatforms.has(id)) {
+    shadowSelectedPlatforms.delete(id);
+    btn.style.background = 'var(--surface)';
+    btn.style.borderColor = 'var(--border)';
+    btn.style.color = 'var(--text2)';
+  } else {
+    shadowSelectedPlatforms.add(id);
+    btn.style.background = 'rgba(0,255,170,0.08)';
+    btn.style.borderColor = 'rgba(0,255,170,0.4)';
+    btn.style.color = 'var(--accent)';
+  }
+  document.getElementById('shadow-selected-count').textContent = shadowSelectedPlatforms.size;
+}
+
+function selectAllShadowPlatforms() {
+  SHADOW_PLATFORMS.forEach(p => {
+    shadowSelectedPlatforms.add(p.id);
+    const btn = document.getElementById(`sp-${p.id}`);
+    if (btn) {
+      btn.style.background = 'rgba(0,255,170,0.08)';
+      btn.style.borderColor = 'rgba(0,255,170,0.4)';
+      btn.style.color = 'var(--accent)';
+    }
+  });
+  document.getElementById('shadow-selected-count').textContent = shadowSelectedPlatforms.size;
+}
+
+function clearAllShadowPlatforms() {
+  SHADOW_PLATFORMS.forEach(p => {
+    shadowSelectedPlatforms.delete(p.id);
+    const btn = document.getElementById(`sp-${p.id}`);
+    if (btn) {
+      btn.style.background = 'var(--surface)';
+      btn.style.borderColor = 'var(--border)';
+      btn.style.color = 'var(--text2)';
+    }
+  });
+  document.getElementById('shadow-selected-count').textContent = '0';
+}
+
+function runWhoKnowsWhat() {
+  if (shadowSelectedPlatforms.size === 0) return;
+
+  const selected = SHADOW_PLATFORMS.filter(p => shadowSelectedPlatforms.has(p.id));
+
+  // Aggregate all known data points
+  const allKnown = new Set();
+  selected.forEach(p => p.knows.forEach(k => allKnown.add(k)));
+
+  // Map to categories
+  const catCounts = {};
+  Object.entries(DATA_CATEGORIES).forEach(([key, cat]) => {
+    const matches = cat.items.filter(item => allKnown.has(item));
+    catCounts[key] = { ...cat, count: matches.length, total: cat.items.length, items: matches };
+  });
+
+  // Exposure score
+  const totalPossible = Object.values(DATA_CATEGORIES).reduce((s, c) => s + c.items.length, 0);
+  const totalKnown = Object.values(catCounts).reduce((s, c) => s + c.count, 0);
+  const exposureScore = Math.round((totalKnown / totalPossible) * 100);
+
+  const scoreColor = exposureScore >= 70 ? 'var(--red)' : exposureScore >= 40 ? 'var(--yellow)' : 'var(--green)';
+  const scoreLabel = exposureScore >= 70 ? 'CRITICAL EXPOSURE' : exposureScore >= 40 ? 'HIGH EXPOSURE' : 'MODERATE EXPOSURE';
+
+  // Most dangerous platform
+  const mostDangerous = selected.reduce((a, b) => a.knows.length > b.knows.length ? a : b);
+
+  let html = `
+    <!-- SCORE HEADER -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;">
+      <div style="background:var(--surface);border:1px solid ${scoreColor}44;border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-weight:800;color:${scoreColor};">${exposureScore}%</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">EXPOSURE SCORE</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-weight:800;color:var(--accent);">${selected.length}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">PLATFORMS SELECTED</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-weight:800;color:var(--red);">${allKnown.size}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">DATA POINTS EXPOSED</div>
+      </div>
+    </div>
+
+    <!-- EXPOSURE BAR -->
+    <div class="score-row" style="margin-bottom:24px;">
+      <div class="score-label">${scoreLabel}</div>
+      <div class="score-bar-wrap"><div class="progress-bar" style="width:${exposureScore}%;background:${scoreColor};transition:width 1s ease;"></div></div>
+      <div class="score-value" style="color:${scoreColor};">${exposureScore}%</div>
+    </div>
+
+    <!-- DATA CATEGORY BREAKDOWN -->
+    <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:12px;">WHAT THEY COLLECTIVELY KNOW ABOUT YOU</div>
+    <div style="display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-bottom:24px;">`;
+
+  Object.entries(catCounts).forEach(([key, cat]) => {
+    if (cat.count === 0) return;
+    const pct = Math.round((cat.count / cat.total) * 100);
+    html += `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+        <div onclick="this.parentElement.querySelector('.cat-body').style.display=this.parentElement.querySelector('.cat-body').style.display==='none'?'block':'none';this.querySelector('.cat-arrow').style.transform=this.parentElement.querySelector('.cat-body').style.display==='none'?'rotate(0deg)':'rotate(180deg)'"
+             style="display:flex;justify-content:space-between;align-items:center;padding:14px;cursor:pointer;user-select:none;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;">${cat.icon}</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);">${cat.label}</span>
+            <div style="height:4px;width:80px;background:var(--border);border-radius:2px;">
+              <div style="height:100%;width:${pct}%;background:${cat.color};border-radius:2px;"></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:11px;font-weight:700;color:${cat.color};">${cat.count} data points</span>
+            <span class="cat-arrow" style="color:var(--text3);font-size:12px;transition:transform 0.2s;">▼</span>
+          </div>
+        </div>
+        <div class="cat-body" style="display:none;padding:0 14px 14px;">
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">
+            ${cat.items.map(item => `<span style="font-size:10px;padding:2px 8px;background:${cat.color}18;color:${cat.color};border-radius:4px;border:1px solid ${cat.color}33;">${item}</span>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  });
+
+  html += `</div>
+
+    <!-- MOST DANGEROUS PLATFORM + BREAKDOWN BUTTON -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:rgba(255,68,102,0.06);border:1px solid rgba(255,68,102,0.25);border-radius:8px;padding:16px;margin-bottom:20px;">
+      <div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:8px;">🚨 MOST DATA-HUNGRY PLATFORM</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:28px;">${mostDangerous.icon}</span>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);">${mostDangerous.name}</div>
+            <div style="font-size:11px;color:var(--text3);">${mostDangerous.knows.length} data points collected</div>
+          </div>
+        </div>
+      </div>
+      <button onclick="
+        const el = document.getElementById('shadow-platform-breakdown');
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        this.textContent = el.style.display === 'none' ? '📋 See Per-Platform Breakdown →' : '✕ Hide Breakdown';
+        if (el.style.display !== 'none') setTimeout(() => el.scrollIntoView({behavior:'smooth', block:'start'}), 50);
+      " style="background:rgba(255,68,102,0.12);border:1px solid rgba(255,68,102,0.35);color:var(--red);padding:10px 16px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-mono);white-space:nowrap;">
+        📋 See Per-Platform Breakdown →
+      </button>
+    </div>
+
+    <!-- PER-PLATFORM BREAKDOWN (hidden by default) -->
+    <div id="shadow-platform-breakdown" style="display:none;">
+      <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:12px;">PER-PLATFORM BREAKDOWN</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">`;
+
+  selected.sort((a, b) => b.knows.length - a.knows.length).forEach(p => {
+    const riskColor = p.risk === 'critical' ? 'var(--red)' : p.risk === 'high' ? 'var(--yellow)' : 'var(--accent)';
+    html += `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span>${p.icon}</span>
+            <span style="font-size:12px;font-weight:700;color:var(--text);">${p.name}</span>
+          </div>
+          <span style="font-size:10px;font-weight:700;color:${riskColor};background:${riskColor}18;padding:2px 6px;border-radius:4px;">${p.risk.toUpperCase()}</span>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;">${p.knows.length} data points</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">
+          ${p.knows.map(k => `<span style="font-size:10px;padding:2px 6px;background:var(--bg);color:var(--text3);border-radius:4px;border:1px solid var(--border);">${k}</span>`).join('')}
+        </div>
+      </div>`;
+  });
+
+  html += `</div></div>`;
+
+  document.getElementById('shadow-whoknows-result').innerHTML = html;
+  document.getElementById('shadow-whoknows-result-box').classList.add('show');
+}
+
+// ── NOISE PROFILE ──
+
+function runNoiseProfile() {
+  const activityLevel = document.getElementById('noise-activity').value;
+  const platformCount = parseInt(document.getElementById('noise-platform-count').value);
+  const concerns = Array.from(document.querySelectorAll('.noise-concern:checked')).map(el => el.value);
+
+  if (concerns.length === 0) {
+    alert('Please select at least one privacy concern.');
+    return;
+  }
+
+  const strategies = [];
+
+  // Based on activity level
+  if (activityLevel === 'high') {
+    strategies.push({
+      icon: '🎭', priority: 'CRITICAL',
+      title: 'Compartmentalize Your Identities',
+      detail: 'You have high online activity. Create separate email addresses and usernames for different life areas: work, shopping, social, and throwaway accounts.'
+    });
+  }
+
+  if (platformCount >= 10) {
+    strategies.push({
+      icon: '🧹', priority: 'HIGH',
+      title: 'Platform Purge',
+      detail: `You use ${platformCount}+ platforms. Each is a data broker. Delete accounts you haven't used in 6+ months. Less surface area = less exposure.`
+    });
+  }
+
+  if (concerns.includes('tracking')) {
+    strategies.push({
+      icon: '🌐', priority: 'HIGH',
+      title: 'Browser Isolation',
+      detail: 'Use different browsers for different purposes: Firefox + uBlock Origin for daily use, Tor Browser for sensitive searches, a clean browser profile for shopping.'
+    });
+    strategies.push({
+      icon: '🔍', priority: 'MEDIUM',
+      title: 'Search Engine Rotation',
+      detail: 'Alternate between DuckDuckGo, Startpage, and Brave Search. Never use Google while logged in. Your search history builds the most accurate profile of you.'
+    });
+  }
+
+  if (concerns.includes('identity')) {
+    strategies.push({
+      icon: '🪪', priority: 'HIGH',
+      title: 'Synthetic Identity Layer',
+      detail: 'Use the Fake Identity generator for non-critical signups. Combine with a temp email. Reserve your real identity only for legally required services.'
+    });
+    strategies.push({
+      icon: '📸', priority: 'MEDIUM',
+      title: 'Photo Discipline',
+      detail: 'Never upload photos with consistent backgrounds or locations. Strip EXIF data (use Metadata Cleaner). Avoid face-visible photos on non-trusted platforms.'
+    });
+  }
+
+  if (concerns.includes('financial')) {
+    strategies.push({
+      icon: '💳', priority: 'CRITICAL',
+      title: 'Payment Isolation',
+      detail: 'Use virtual cards (Privacy.com or bank virtual card features) for online purchases. Never use your real card on new platforms. Each merchant gets a unique card number.'
+    });
+  }
+
+  if (concerns.includes('location')) {
+    strategies.push({
+      icon: '📍', priority: 'HIGH',
+      title: 'Location Noise',
+      detail: 'Disable location for all apps except navigation. Use a VPN with consistent exit node to avoid location triangulation. Never check in on social media in real time.'
+    });
+  }
+
+  if (concerns.includes('social')) {
+    strategies.push({
+      icon: '👥', priority: 'MEDIUM',
+      title: 'Social Graph Poisoning',
+      detail: 'Your connections reveal as much as your data. Connect with diverse, unrelated accounts. Avoid syncing contacts to social platforms. Use aliases in group chats.'
+    });
+    strategies.push({
+      icon: '🤫', priority: 'MEDIUM',
+      title: 'Posting Pattern Disruption',
+      detail: 'Post at irregular times. Vary your writing style. Avoid consistent topics that form a behavioral fingerprint. AI can identify you from writing patterns alone.'
+    });
+  }
+
+  if (concerns.includes('devices')) {
+    strategies.push({
+      icon: '💻', priority: 'HIGH',
+      title: 'Device Fingerprint Rotation',
+      detail: 'Use the Browser Fingerprint Analyzer regularly. Change browser fonts, disable WebGL where possible, use a VPN. Consider a dedicated device for sensitive activities.'
+    });
+  }
+
+  // Always add these
+  strategies.push({
+    icon: '📧', priority: 'MEDIUM',
+    title: 'Email Aliasing',
+    detail: 'Use email aliases (SimpleLogin, AnonAddy) so every service gets a unique email. When a service gets breached or sells data, you know exactly who leaked — and can kill that alias.'
+  });
+
+  strategies.push({
+    icon: '🔑', priority: 'MEDIUM',
+    title: 'Password Unlinkability',
+    detail: 'Unique passwords per site prevent cross-platform linking. If attackers get one password hash, they should learn nothing about your other accounts.'
+  });
+
+  const priorityOrder = { 'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2 };
+  strategies.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+  const noiseScore = Math.min(
+    Math.round(
+      (activityLevel === 'high' ? 80 : activityLevel === 'medium' ? 50 : 30) +
+      (platformCount * 1.5) +
+      (concerns.length * 5)
+    ), 98
+  );
+
+  const scoreColor = noiseScore >= 70 ? 'var(--red)' : noiseScore >= 40 ? 'var(--yellow)' : 'var(--green)';
+
+  let html = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+      <div style="background:var(--surface);border:1px solid ${scoreColor}44;border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-weight:800;color:${scoreColor};">${noiseScore}%</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">TRACKABILITY SCORE</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-weight:800;color:var(--accent);">${strategies.length}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">STRATEGIES GENERATED</div>
+      </div>
+    </div>
+
+    <div class="score-row" style="margin-bottom:24px;">
+      <div class="score-label">How trackable are you?</div>
+      <div class="score-bar-wrap"><div class="progress-bar" style="width:${noiseScore}%;background:${scoreColor};transition:width 1s ease;"></div></div>
+      <div class="score-value" style="color:${scoreColor};">${noiseScore}%</div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:11px;color:var(--text3);letter-spacing:1px;">YOUR CAMOUFLAGE STRATEGIES</div>
+      <button onclick="
+        const el = document.getElementById('noise-strategies');
+        el.style.display = el.style.display === 'none' ? 'grid' : 'none';
+        this.textContent = el.style.display === 'none' ? '🌫️ Show Strategies →' : '✕ Hide Strategies';
+        if (el.style.display !== 'none') setTimeout(() => el.scrollIntoView({behavior:'smooth', block:'start'}), 50);
+      " style="background:rgba(0,255,170,0.08);border:1px solid rgba(0,255,170,0.25);color:var(--accent);padding:8px 14px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-mono);">
+        🌫️ Show Strategies →
+      </button>
+    </div>
+    <div id="noise-strategies" style="display:none;gap:10px;">`;
+
+  strategies.forEach(s => {
+    const pc = s.priority === 'CRITICAL' ? 'var(--red)' : s.priority === 'HIGH' ? 'var(--yellow)' : 'var(--accent)';
+    html += `
+      <div style="background:var(--surface);border:1px solid ${pc}33;border-radius:8px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <span style="font-size:20px;">${s.icon}</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text);">${s.title}</div>
+            <span style="font-size:10px;font-weight:700;color:${pc};background:${pc}18;padding:2px 6px;border-radius:4px;">${s.priority}</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.7;">${s.detail}</div>
+      </div>`;
+  });
+
+  html += `</div>`;
+
+  document.getElementById('shadow-noise-result').innerHTML = html;
+  document.getElementById('shadow-noise-result-box').classList.add('show');
+}
+initShadowPlatforms();

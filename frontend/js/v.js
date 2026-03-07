@@ -3,13 +3,13 @@
    ═══════════════════════════════════════════════════════════════ */
 
 // ═══ GROQ API CONFIG ═══
-const GROQ_API_KEY = 'YOUR_GROQ_API_KEY_IS_HERE';
+const GROQ_API_KEY = 'YOUR_GROQ_API_KEY_HERE';
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
 // ── PIXEL ART GRID ───────────────────────────────────────────────
 const _=0,B=1,D=2,M=3,G=4,C=5,P=6,L=7,S=8;
-const V_GRID = [
+const V_GRID = [  
   [_,_,B,B,B,B,B,B,B,B,B,B,_,_],
   [_,B,D,D,D,D,D,D,D,D,D,D,B,_],
   [B,D,D,D,D,D,D,D,D,D,D,D,D,B],
@@ -82,6 +82,9 @@ document.body.insertAdjacentHTML('beforeend', `
       <button class="vq" onclick="vQuick('metadata')">📸 Metadata</button>
       <button class="vq" onclick="vQuick('tracker')">🍪 Tracker</button>
       <button class="vq" onclick="vQuick('footprint')">👣 Footprint</button>
+      <button class="vq" onclick="vQuick('identity')">🪪 Fake ID</button>
+      <button class="vq" onclick="vQuick('cloak')">🎭 Cloak</button>
+      <button class="vq" onclick="vQuick('shadow')">👁️ Shadow</button>
     </div>
     <div id="v-bar">
       <span id="v-pr">▸</span>
@@ -222,6 +225,20 @@ function vQuick(a) {
     setTimeout(() => { if (typeof openTool === 'function') openTool('metadata'); }, 700);
     return;
   }
+  if (a === 'cloak') {
+    vMsg('v', '🎭 Opening Privacy Cloak...');
+    setTimeout(() => { if (typeof openTool === 'function') openTool('cloak'); }, 700);
+    return;
+  }
+  if (a === 'shadow') {
+    vMsg('v', '👁️ Opening Digital Shadow...');
+    setTimeout(() => { if (typeof openTool === 'function') openTool('shadow'); }, 700);
+    return;
+  }
+  if (a === 'identity') {
+    vGenIdentity();
+    return;
+  }
   const prompts = {
     anonymize: 'Paste the text to anonymize.',
     phishing:  'Paste the email content to scan.',
@@ -275,6 +292,20 @@ async function vSend() {
     em ? await vDo('breach', em) : (vWait = 'breach', vMsg('v', 'Give me the email address.'));
     return;
   }
+  if (/(identity|fake.*id|sahte.*kimlik|kimlik.*üret|generate.*identity|fake.*identity)/.test(t)) {
+    vGenIdentity();
+    return;
+  }
+  if (/(cloak|fake.*face|anonim.*yüz|yüz.*üret|privacy.*cloak)/.test(t)) {
+    vMsg('v', '🎭 Opening Privacy Cloak...');
+    setTimeout(() => { if (typeof openTool === 'function') openTool('cloak'); }, 600);
+    return;
+  }
+  if (/(shadow|kim.*biliyor|who.*knows|dijital.*gölge|digital.*shadow)/.test(t)) {
+    vMsg('v', '👁️ Opening Digital Shadow...');
+    setTimeout(() => { if (typeof openTool === 'function') openTool('shadow'); }, 600);
+    return;
+  }
   if (/(open|aç|show|metadata|fingerprint|webrtc|temp.*mail|geçici|password|şifre|tracker|takipçi)/.test(t)) {
     vOpenTool(t);
     return;
@@ -286,15 +317,17 @@ async function vSend() {
 // ── TOOL OPENER ──────────────────────────────────────────────────
 function vOpenTool(t) {
   const map = [
-    [/(tracker|cookie|takipçi|çerez)/,  'tracker',     'Tracker Analyzer'],
-    [/(metadata|exif|photo|fotoğraf)/,  'metadata',    'Metadata Cleaner'],
-    [/(fingerprint|parmak)/,            'fingerprint', 'Fingerprint Analyzer'],
-    [/(webrtc|vpn.*leak)/,              'webrtc',      'WebRTC Leak Test'],
-    [/(temp.*mail|geçici|disposable)/,  'email',       'Temp Email'],
-    [/(password|şifre)/,                'password',    'Password Manager'],
-    [/(anonymi|anonimle)/,              'anonymizer',  'Text Anonymizer'],
-    [/(phishing|sentinel)/,             'phishing',    'Phishing Detector'],
-    [/(footprint|dijital.*iz)/,         'footprint',   'Digital Footprint'],
+    [/(cloak|fake.*face|privacy.*cloak|gizle.*yüz)/,   'cloak',       'Privacy Cloak'],
+    [/(shadow|digital.*shadow|kim.*biliyor)/,           'shadow',      'Digital Shadow'],
+    [/(tracker|cookie|takipçi|çerez)/,                  'tracker',     'Tracker Analyzer'],
+    [/(metadata|exif|photo|fotoğraf)/,                  'metadata',    'Metadata Cleaner'],
+    [/(fingerprint|parmak)/,                            'fingerprint', 'Fingerprint Analyzer'],
+    [/(webrtc|vpn.*leak)/,                              'webrtc',      'WebRTC Leak Test'],
+    [/(temp.*mail|geçici|disposable)/,                  'email',       'Temp Email'],
+    [/(password|şifre)/,                                'password',    'Password Manager'],
+    [/(anonymi|anonimle)/,                              'anonymizer',  'Text Anonymizer'],
+    [/(phishing|sentinel)/,                             'phishing',    'Phishing Detector'],
+    [/(footprint|dijital.*iz)/,                         'footprint',   'Digital Footprint'],
   ];
   for (const [re, tool, name] of map) {
     if (re.test(t)) {
@@ -303,7 +336,30 @@ function vOpenTool(t) {
       return;
     }
   }
-  vMsg('v', 'Available: Anonymizer, Phishing, Password, Temp Email, Metadata, WebRTC, Fingerprint, Tracker, Digital Footprint. Which one?');
+  vMsg('v', 'Available: Anonymizer, Phishing, Password, Temp Email, Metadata, WebRTC, Fingerprint, Tracker, Footprint, Privacy Cloak, Digital Shadow. Which one?');
+}
+
+// ── FAKE IDENTITY GENERATOR ──────────────────────────────────────
+function vGenIdentity() {
+  if (typeof generateIdentity !== 'function') {
+    vMsg('v', '⚠️ Privacy Cloak not loaded. Opening tool...');
+    setTimeout(() => { if (typeof openTool === 'function') openTool('cloak'); }, 600);
+    return;
+  }
+  const id = generateIdentity(true);
+  if (!id) { vMsg('v', '⚠️ Identity generation failed.'); return; }
+  vMsg('v', '🪪 Synthetic identity generated. Use it for non-critical signups, choom.');
+  vCard(`
+    <strong style="color:var(--cyber2,#8338ec)">🪪 FAKE IDENTITY</strong><br><br>
+    <strong>Name:</strong> ${id.first} ${id.last}<br>
+<strong>Email:</strong> ${id.email}<br>
+<strong>Phone:</strong> ${id.phone}<br>
+<strong>Address:</strong> ${id.street}, ${id.city}, ${id.state}<br>
+<strong>Birthday:</strong> ${id.dob} (${id.age})<br>
+<strong>Username:</strong> ${id.username}<br>
+<strong>Password:</strong> ${id.password}<br>
+    <span style="opacity:.4;font-size:10px;">🎭 Privacy Cloak — Synthetic Identity Engine</span>
+  `);
 }
 
 // ── BACKEND DISPATCHER ───────────────────────────────────────────
@@ -467,6 +523,8 @@ NetRunner tools available:
 - Fingerprint Analyzer: Browser fingerprinting analysis
 - Cookie & Tracker Analyzer: Scans any URL for hidden trackers, ad networks, fingerprinting scripts, and data brokers
 - Digital Footprint Analyzer: Scans 121 platforms to find where an email is registered, shows exposure score
+- Privacy Cloak: Generates photorealistic faces of non-existent people for identity verification bypass; also generates complete fake identities (name, email, phone, address)
+- Digital Shadow: Select platforms you use and see exactly what data they collectively know about you; generates personalized camouflage strategies
 
 CRITICAL LANGUAGE RULE:
 - If user writes in Turkish → respond ENTIRELY in Turkish
