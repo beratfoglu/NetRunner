@@ -2,7 +2,7 @@
 
 > *Leave no trace. Trust no node.*
 
-A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered text anonymization, AI-driven phishing detection, cryptographic password management, disposable email generation, browser fingerprint analysis, cookie & tracker detection, digital footprint scanning, and AI face generation — all running locally with zero data stored server-side.
+A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered text anonymization, AI-driven phishing detection, cryptographic password management, disposable email generation, browser fingerprint analysis, cookie & tracker detection, digital footprint scanning, AI face generation, and digital shadow profiling — all running locally with zero data stored server-side.
 
 ---
 
@@ -77,7 +77,16 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 ---
 
 ### 🎭 Privacy Cloak
-![Privacy Cloak](ScreenShots/privacy_cloak.png)
+| Generate Face | Fake Identity |
+|---------------|---------------|
+| ![Privacy Cloak](ScreenShots/privacy_cloak.png) | ![Fake Identity](ScreenShots/fake_identity.png) |
+
+---
+
+### 👁️ Digital Shadow
+| Who Knows What | Noise Profile |
+|----------------|---------------|
+| ![Who Knows What](ScreenShots/who_knows_what.png) | ![Noise Profile](ScreenShots/digital_shadow_noise.png) |
 
 ---
 
@@ -93,7 +102,7 @@ A cyberpunk-inspired, open-source digital privacy toolkit combining NLP-powered 
 
 ## Features
 
-NetRunner bundles **11 privacy tools** into a single, locally-hosted web application.
+NetRunner bundles **12 privacy tools** into a single, locally-hosted web application.
 
 ### 🔏 Text Anonymizer
 Detects and masks Personally Identifiable Information (PII) in any text using a **hybrid NLP engine** — a spaCy transformer model (`en_core_web_md`) combined with high-priority regex patterns.
@@ -191,13 +200,34 @@ Scans 121 platforms to discover where an email address is registered and calcula
 - Scan time: ~10–15 seconds for 121 platforms
 
 ### 🎭 Privacy Cloak
-Generates photorealistic faces of people who do not exist, for use when platforms demand identity verification that unnecessarily collects biometric data.
+Two tabs in one panel for protecting your real identity online.
 
+**Generate Face:**
 - Powered by **StyleGAN2** via thispersondoesnotexist.com — every face is 100% synthetic
 - Watermark automatically cropped from generated images
 - All EXIF metadata stripped before download
 - Random User-Agent rotation + cache-busting ensures a different face on every request
 - One-click download as JPEG
+
+**Fake Identity:**
+- Generates a complete synthetic identity: full name, email, phone, address, date of birth, username, and cryptographically secure password
+- Plausible but entirely fictional — safe to use for non-critical signups that don't require real information
+- One-click copy for all fields
+
+### 👁️ Digital Shadow
+Select the platforms you use and see exactly what data they collectively know about you — then generate a personalized camouflage strategy to reduce your digital footprint.
+
+**Who Knows What:**
+- 22 platforms across 11 categories: Search & Tech, Social Media, Professional, Shopping, Finance, Messaging, Email, Streaming, Transport, Travel, Devices & Tech
+- Risk levels per platform: Critical / High / Medium
+- **Exposure Score**: calculated across 6 data categories — Identity, Financial, Location, Behavioral, Biometric, Social Graph
+- **Data category breakdown**: collapsible cards showing exactly which data points each category exposes
+- **Per-platform breakdown**: 3-column grid showing every selected platform's collected data, color-coded by risk level
+
+**Noise Profile:**
+- Inputs: online activity level, platform count slider, privacy concern checkboxes
+- **Trackability Score**: calculated from activity level, platform count, and concern profile
+- **Camouflage strategies**: personalized, priority-sorted (CRITICAL / HIGH / MEDIUM) recommendations — Browser Isolation, Synthetic Identity Layer, Payment Isolation, Location Noise, Device Fingerprint Rotation, and more
 
 ---
 
@@ -206,7 +236,9 @@ Generates photorealistic faces of people who do not exist, for use when platform
 **V** is a built-in cyberpunk AI assistant powered by the **Groq API** (LLaMA 3.3 70B).
 
 - Dispatches tasks directly to NetRunner backends: anonymizer, phishing, breach checker, tracker analyzer, digital footprint
-- Quick-action buttons: Anonymize, Email Scan, URL Check, Breach, Metadata, Tracker, Footprint
+- **Fake Identity generation**: generates a complete synthetic identity directly inside the chat
+- **Tool shortcuts**: quick-open Privacy Cloak and Digital Shadow via chat command or button
+- Quick-action buttons: Anonymize, Email Scan, URL Check, Breach, Metadata, Tracker, Footprint, Fake ID, Cloak, Shadow
 - Natural language routing: detects intent from keywords in both Turkish and English
 - Detects user language (English/Turkish) and responds accordingly
 - Full conversation history maintained in-session
@@ -310,7 +342,7 @@ There are two ways to run NetRunner: **Docker** (recommended) or **manual**.
 
 ### 🐳 Option A — Docker (Recommended)
 
-The easiest way to run all 11 backend services with a single command.
+The easiest way to run all backend services with a single command.
 
 #### Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -348,7 +380,7 @@ docker-compose up --build
 
 #### 4. Open the frontend
 
-Open `frontend/index.html` in your browser. All 11 services are now running.
+Open `frontend/index.html` in your browser. All services are now running.
 
 #### Managing services
 
@@ -523,6 +555,7 @@ Open `frontend/index.html` directly in your browser — no web server required.
 - **Tracker Analyzer**: URLs you scan are fetched server-side — the target site sees your server IP, not your browser
 - **Digital Footprint Analyzer**: uses the "forgot password" flow to check platform registration — no passwords are entered and no accounts are accessed; results are informational only
 - **Privacy Cloak**: generated faces are 100% synthetic — the person does not exist; no real biometric data is used or stored
+- **Digital Shadow**: all platform analysis runs entirely client-side — no data leaves your browser
 - **WebRTC & DNS Leak Test**: runs entirely client-side — no data is sent to NetRunner servers
 
 ---
