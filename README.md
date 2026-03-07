@@ -317,6 +317,79 @@ NetRunner/
 └── ScreenShots/
 ```
 
+### Data Flow
+
+```mermaid
+flowchart TD
+    USER(["👤 USER INPUT"])
+
+    subgraph INPUT ["INPUT LAYER"]
+        direction LR
+        T1["📝 Text / PII"]
+        T2["🔗 URL"]
+        T3["📧 Email Content"]
+        T4["📧 Email Address"]
+        T5["🖼️ Image"]
+        T6["🌐 Browser"]
+        T7["🍪 Target URL"]
+        T8["👣 Email Address"]
+        T9["🎭 Identity Request"]
+        T10["👁️ Platform Selection"]
+    end
+
+    subgraph BACKEND ["⚡ PROCESSING LAYER  —  stateless · no logging · ephemeral"]
+        direction LR
+        B1["Text Anonymizer\nspaCy + Regex · port 5001"]
+        B2["Sentinel AI\nRandom Forest · port 5000"]
+        B3["PostWatch AI\nDistilBERT · port 5007"]
+        B4["Breach Checker\nBreachDirectory API · port 5003"]
+        B5["Metadata Cleaner\nPillow EXIF · port 5005"]
+        B6["Fingerprint Analyzer\nEntropy Model · port 5004"]
+        B7["Tracker Analyzer\nPlaywright + BS4 · port 5008"]
+        B8["Footprint Analyzer\nHolehe CLI · port 5006"]
+        B9["Privacy Cloak\nStyleGAN2 · port 5009"]
+        B10["Digital Shadow\nclient-side only"]
+    end
+
+    subgraph OUTPUT ["OUTPUT LAYER"]
+        direction LR
+        O1["✅ Anonymized Text"]
+        O2["🚨 Phishing Score"]
+        O3["⚠️ Risk Level"]
+        O4["🔓 Breach Report"]
+        O5["🖼️ Cleaned Image"]
+        O6["🔍 Uniqueness Score"]
+        O7["🍪 Tracker Report"]
+        O8["👣 Exposure Score"]
+        O9["🎭 Synthetic Identity"]
+        O10["📊 Shadow Profile"]
+    end
+
+    PURGE(["🔥 DATA PURGED\nrequest ends → memory freed\nnothing persisted"])
+
+    USER --> INPUT
+
+    T1 --> B1 --> O1
+    T2 --> B2 --> O2
+    T3 --> B3 --> O3
+    T4 --> B4 --> O4
+    T5 --> B5 --> O5
+    T6 --> B6 --> O6
+    T7 --> B7 --> O7
+    T8 --> B8 --> O8
+    T9 --> B9 --> O9
+    T10 --> B10 --> O10
+
+    OUTPUT --> USER
+    OUTPUT --> PURGE
+
+    style USER fill:#00ff9f,color:#000,stroke:#00ff9f
+    style PURGE fill:#ff003c,color:#fff,stroke:#ff003c
+    style BACKEND fill:#0d0d0d,color:#00ff9f,stroke:#00ff9f,stroke-width:2px
+    style INPUT fill:#0d0d0d,color:#ccc,stroke:#333
+    style OUTPUT fill:#0d0d0d,color:#ccc,stroke:#333
+```
+
 ### Service Port Map
 
 | Port | Service | Technology |
